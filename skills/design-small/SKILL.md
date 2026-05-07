@@ -1,115 +1,115 @@
 ---
 name: design-small
-description: "웹소설의 작은 설계(25화 단위 세부 설계)를 수행하는 오케스트레이터. 세부 캐릭터 시트 + 세부 플롯 훅 가이드를 생성한다. 큰 설계 문서(부트스트랩, 캐릭터 시트, 플롯 훅 가이드)가 전제 조건. 자동 리서치(domain-researcher 서브에이전트)로 해당 아크의 세부 자료를 수집한 후 설계를 진행한다. '작은 설계', '세부 설계', '25화 설계', 'N~M화 설계', '에피소드별 플롯', '회차별 훅' 요청에 이 스킬을 사용할 것. 큰 설계(전체 소설)가 필요하면 design-big을, 통합 설계나 모호한 요청은 design 라우터를, 단일 영역만 필요하면 bootstrap/character/plot-hook을 사용하라."
+description: "Web 小説の小さな設計（25 話単位の詳細設計）を実行するオーケストレーター。詳細キャラクターシート + 詳細プロットフックガイドを生成する。大きな設計文書（ブートストラップ、キャラクターシート、プロットフックガイド）が前提条件。自動リサーチ（domain-researcher サブエージェント）で当該アークの詳細資料を収集した後に設計を進める。「小さな設計」「詳細設計」「25 話設計」「N〜M 話設計」「エピソード別プロット」「話別フック」の要請にこのスキルを使用すること。大きな設計（小説全体）が必要なら design-big を、統合設計や曖昧な要請は design ルーターを、単一領域のみ必要なら bootstrap/character/plot-hook を使用せよ。"
 ---
 
-# Novel Design Small — 작은 설계 오케스트레이터
+# Novel Design Small — 小さな設計オーケストレーター
 
-웹소설의 25화 단위 세부 설계를 수행한다. 큰 설계 산출물을 토대로, domain-researcher 서브에이전트가 에피소드 수준의 구체적 전문 지식과 실제 사건 디테일을 자동 리서치한다.
+Web 小説の 25 話単位の詳細設計を実行する。大きな設計の成果物を土台に、domain-researcher サブエージェントがエピソードレベルの具体的な専門知識と実際の事件ディテールを自動でリサーチする。
 
-## 실행 모드: 에이전트 팀
+## 実行モード: エージェントチーム
 
-## 에이전트 구성
+## エージェント構成
 
-| 팀원 | 에이전트 파일 | 역할 | 스킬 | 출력 |
+| チームメンバー | エージェントファイル | 役割 | スキル | 出力 |
 |------|-------------|------|------|------|
-| character-architect | `${CLAUDE_PLUGIN_ROOT}/agents/character-architect.md` | 세부 캐릭터 설계 | character (모드 B) | 세부 캐릭터 시트 |
-| plot-hook-engineer | `${CLAUDE_PLUGIN_ROOT}/agents/plot-hook-engineer.md` | 세부 플롯/훅 설계 | plot-hook (모드 B) | 세부 플롯 훅 가이드 |
+| character-architect | `${CLAUDE_PLUGIN_ROOT}/agents/character-architect.md` | 詳細キャラクター設計 | character (モード B) | 詳細キャラクターシート |
+| plot-hook-engineer | `${CLAUDE_PLUGIN_ROOT}/agents/plot-hook-engineer.md` | 詳細プロット/フック設計 | plot-hook (モード B) | 詳細プロットフックガイド |
 
-**domain-researcher는 팀원이 아닌 서브에이전트**로, 팀 구성(TeamCreate) 전에 실행된다.
+**domain-researcher はチームメンバーではなくサブエージェント**として、チーム編成（TeamCreate）の前に実行される。
 
-## 전제 조건
+## 前提条件
 
-큰 설계 문서 3종이 존재해야 한다:
-- `{작품가제}_부트스트랩.md`
-- `{작품가제}_캐릭터시트.md`
-- `{작품가제}_플롯훅가이드.md`
+大きな設計文書 3 種が存在する必要がある:
+- `{作品仮題}_ブートストラップ.md`
+- `{作品仮題}_キャラクターシート.md`
+- `{作品仮題}_プロットフックガイド.md`
 
-## 공유 레퍼런스
+## 共有リファレンス
 
-- **genre-dna-framework.md 위치**: `${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md` (라우터 하위 — big/small 공용)
+- **genre-dna-framework.md の位置**: `${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md` (ルーター配下 — big/small 共用)
 
-## 권한 안내
+## 権限案内
 
-이 스킬은 팀원(서브에이전트)이 `.claude/`, `design/`, `_workspace/` 하위 파일을 Read합니다.
-최초 실행 시 `Read(//**)` 권한을 허용하면 반복 승인 없이 진행됩니다.
+このスキルはチームメンバー（サブエージェント）が `.claude/`、`design/`、`_workspace/` 配下のファイルを Read する。
+初回実行時に `Read(//**)` 権限を許可すれば反復承認なしで進行する。
 
-## 워크플로우
+## ワークフロー
 
-### Phase 1: 범위 확인 및 큰 설계 문서 점검
+### Phase 1: 範囲確認および大きな設計文書の点検
 
-1. 대상 화수 구간 확인 (권장: 25화 단위. 예: 1~25화, 26~50화)
-2. 큰 설계 문서 3종 존재 확인 (novel-config.md가 있으면 `design_dir`에서, 없으면 프로젝트 루트와 `_workspace/`에서 탐색):
-   - `{DESIGN_DIR}/{작품가제}_부트스트랩.md` (또는 `_workspace/01_*`)
-   - `{DESIGN_DIR}/{작품가제}_캐릭터시트.md` (또는 `_workspace/02_*`)
-   - `{DESIGN_DIR}/{작품가제}_플롯훅가이드.md` (또는 `_workspace/03_*`)
-   - novel-config.md가 없으면 `design/` 및 프로젝트 루트를 순차 탐색
-   - **누락 시**: 사용자에게 큰 설계를 먼저 완료하도록 안내하고 중단
-3. 큰 설계 문서에서 해당 아크의 개요를 추출:
-   - 아크 제목, 핵심 갈등, 주요 적대자
-   - 해당 구간의 핵심 역량 모듈 항목
-   - 등장 예정 캐릭터 (VIP, 신규 캐릭터)
-4. **아크 범위 정합성 검증**: 요청 화수 구간이 큰 설계 아크 구조와 불일치하면 아크 경계를 사용자에게 안내하고 구간 조정 제안
-5. 아크 개요를 사용자에게 확인 → Phase 1.5로 진행
+1. 対象話数区間の確認（推奨: 25 話単位。例: 1〜25 話、26〜50 話）
+2. 大きな設計文書 3 種の存在確認（novel-config.md があれば `design_dir` から、なければプロジェクトルートと `_workspace/` から探索）:
+   - `{DESIGN_DIR}/{作品仮題}_ブートストラップ.md` (または `_workspace/01_*`)
+   - `{DESIGN_DIR}/{作品仮題}_キャラクターシート.md` (または `_workspace/02_*`)
+   - `{DESIGN_DIR}/{作品仮題}_プロットフックガイド.md` (または `_workspace/03_*`)
+   - novel-config.md がない場合は `design/` およびプロジェクトルートを順次探索
+   - **欠落時**: ユーザーに大きな設計を先に完了するよう案内し中断
+3. 大きな設計文書から該当アークの概要を抽出:
+   - アーク題、核心葛藤、主要敵対者
+   - 当該区間の核心力量モジュール項目
+   - 登場予定キャラクター（VIP、新規キャラクター）
+4. **アーク範囲整合性検証**: 要請話数区間が大きな設計のアーク構造と不一致なら、アーク境界をユーザーに案内し区間調整を提案
+5. アーク概要をユーザーに確認 → Phase 1.5 へ進行
 
-### Phase 1.5: 자동 리서치 (서브에이전트)
+### Phase 1.5: 自動リサーチ (サブエージェント)
 
-> domain-researcher 서브에이전트를 호출하여 해당 아크의 세부 리서치를 자동 수행한다. 사용자 대기 없이 즉시 진행한다.
+> domain-researcher サブエージェントを呼び出し、当該アークの詳細リサーチを自動で行う。ユーザー待機なしに即座に進行する。
 
-**서브에이전트: domain-researcher**
+**サブエージェント: domain-researcher**
 - subagent_type: `general-purpose`
-- 리서치 항목:
-  - **R7 전문 기술/지식 디테일**: 해당 아크에서 활용되는 구체적 전문 지식, 기술, 장면 디테일
-  - **R8 사건 상세 타임라인**: 해당 아크 시간대의 실제 사건 상세 (날짜, 인물, 결과, 파급 효과)
+- リサーチ項目:
+  - **R7 専門技術/知識ディテール**: 当該アークで活用される具体的な専門知識、技術、シーンディテール
+  - **R8 事件詳細タイムライン**: 当該アーク時間帯の実際の事件詳細（日付、人物、結果、波及効果）
 
-- 프롬프트:
+- プロンプト:
 ```
-당신은 domain-researcher 서브에이전트입니다.
-다음 리서치를 수행하세요:
+あなたは domain-researcher サブエージェントです。
+以下のリサーチを実行してください。
 
-1. R7 전문 기술/지식 디테일:
-   - 전문 분야: {전문 분야}
-   - 아크 범위: {N}~{M}화
-   - 분석 항목: 구체적 기술명, 절차, 용어, 리액션 묘사에 활용할 디테일
+1. R7 専門技術/知識ディテール:
+   - 専門分野: {専門分野}
+   - アーク範囲: {N}〜{M}話
+   - 分析項目: 具体的な技術名、手順、用語、リアクション描写に活用するディテール
 
-2. R8 사건 상세 타임라인:
-   - 시대: {해당 아크의 시간대}
-   - 분석 항목: 정확한 날짜, 전조 신호, 파급 효과, 핵심 인물, 사회적 반응
+2. R8 事件詳細タイムライン:
+   - 時代: {当該アークの時間帯}
+   - 分析項目: 正確な日付、前兆シグナル、波及効果、核心人物、社会的反応
 
-큰 설계 문서를 참조하세요:
-- {작품가제}_부트스트랩.md (핵심 역량 모듈, 전문 분야)
-- {작품가제}_플롯훅가이드.md (해당 아크 개요)
+大きな設計文書を参照してください:
+- {作品仮題}_ブートストラップ.md (核心力量モジュール、専門分野)
+- {作品仮題}_プロットフックガイド.md (当該アーク概要)
 
-출력:
-- _workspace/00_research/R7_전문지식_{N}~{M}화.md
-- _workspace/00_research/R8_사건상세_{N}~{M}화.md
+出力:
+- _workspace/00_research/R7_専門知識_{N}〜{M}話.md
+- _workspace/00_research/R8_事件詳細_{N}〜{M}話.md
 ```
 
-- 리서치 결과는 `_workspace/00_research/`에 저장
-- 리서치 완료 후 즉시 Phase 2로 진행
+- リサーチ結果は `_workspace/00_research/` に保存
+- リサーチ完了後ただちに Phase 2 へ進行
 
-### Phase 2: 팀 구성
+### Phase 2: チーム編成
 
-> ⚠️ **TeamCreate 전 안전 점검**:
-> 기존 팀("design-big-team" 등)이 남아있으면 TeamCreate가 실패한다.
-> "Already leading team" 오류 발생 시:
-> 1. `TeamDelete("{기존 팀 이름}")`을 먼저 실행한다
-> 2. TeamDelete 성공 후 아래 TeamCreate를 진행한다
+> ⚠️ **TeamCreate 前の安全点検**:
+> 既存チーム（"design-big-team" など）が残存していれば TeamCreate が失敗する。
+> "Already leading team" エラー発生時:
+> 1. `TeamDelete("{既存チーム名}")` を先に実行する
+> 2. TeamDelete 成功後、下記 TeamCreate を進行する
 
-### Phase 2 시작: 사전 로드 (TeamCreate 전)
+### Phase 2 開始: 事前ロード (TeamCreate 前)
 
-리더는 TeamCreate 전에 팀원에게 전달할 컨텍스트를 사전 로드한다.
+リーダーは TeamCreate 前にチームメンバーへ伝達するコンテキストを事前ロードする。
 
-**Step 2-0a: 리서치 파일 로드**
-- R7_CONTENT = Read("_workspace/00_research/R7_전문지식_{N}~{M}화.md") 또는 "(R7 리서치 미완료)"
-- R8_CONTENT = Read("_workspace/00_research/R8_사건상세_{N}~{M}화.md") 또는 "(R8 리서치 미완료)"
+**Step 2-0a: リサーチファイルのロード**
+- R7_CONTENT = Read("_workspace/00_research/R7_専門知識_{N}〜{M}話.md") または "(R7 リサーチ未完了)"
+- R8_CONTENT = Read("_workspace/00_research/R8_事件詳細_{N}〜{M}話.md") または "(R8 リサーチ未完了)"
 
-**Step 2-0b: 큰 설계 문서 아크 섹션 추출**
-- BOOTSTRAP_EXCERPT = Phase 1에서 추출한 아크 관련 섹션 (핵심 역량 모듈, 세계관 규칙, 유료 전환)
-- CHARACTER_EXCERPT = 캐릭터시트에서 해당 아크 등장 캐릭터, 적대자, VIP 추출
-- PLOT_EXCERPT = 플롯훅가이드에서 해당 아크 개요, 카타르시스 리듬 추출
+**Step 2-0b: 大きな設計文書のアークセクション抽出**
+- BOOTSTRAP_EXCERPT = Phase 1 で抽出したアーク関連セクション（核心力量モジュール、世界観ルール、読者保持転換 — プラットフォーム依存で課金転換または離脱防止転換／書籍化アピール区間）
+- CHARACTER_EXCERPT = キャラクターシートから当該アーク登場キャラクター、敵対者、VIP を抽出
+- PLOT_EXCERPT = プロットフックガイドから当該アーク概要、カタルシスリズムを抽出
 
-리더는 TeamCreate 전에 `_workspace/00_research/` 내 리서치 결과 파일 존재 여부를 Glob으로 확인. 존재하는 파일만 프롬프트에 포함.
+リーダーは TeamCreate 前に `_workspace/00_research/` 内のリサーチ結果ファイルの存在有無を Glob で確認する。存在するファイルのみプロンプトに含める。
 
 ```
 TeamCreate(
@@ -118,265 +118,265 @@ TeamCreate(
     {
       name: "character-architect",
       agent_type: "general-purpose",
-      prompt: "당신은 character-architect 에이전트입니다.
-        ${CLAUDE_PLUGIN_ROOT}/agents/character-architect.md를 읽고 역할을 숙지하세요.
-        ${CLAUDE_PLUGIN_ROOT}/skills/character/SKILL.md를 읽고 모드 B(작은 설계) 절차와 출력 템플릿을 따르세요.
-        ${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md를 읽고 장르 DNA 프레임워크를 숙지하세요.
+      prompt: "あなたは character-architect エージェントです。
+        ${CLAUDE_PLUGIN_ROOT}/agents/character-architect.md を読み役割を熟知してください。
+        ${CLAUDE_PLUGIN_ROOT}/skills/character/SKILL.md を読みモード B（小さな設計）の手順と出力テンプレートに従ってください。
+        ${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md を読みジャンル DNA フレームワークを熟知してください。
 
-        ★ 큰 설계 요약 (Read 불필요 — 리더가 사전 로드):
-        --- 부트스트랩 요약 ---
+        ★ 大きな設計の要約 (Read 不要 — リーダーが事前ロード):
+        --- ブートストラップ要約 ---
         {BOOTSTRAP_EXCERPT}
-        --- 캐릭터시트 요약 ---
+        --- キャラクターシート要約 ---
         {CHARACTER_EXCERPT}
-        --- 플롯훅가이드 요약 ---
+        --- プロットフックガイド要約 ---
         {PLOT_EXCERPT}
 
-        ★ 자동 리서치 결과 (Read 불필요 — 리더가 사전 로드):
-        --- R7 전문지식 ---
+        ★ 自動リサーチ結果 (Read 不要 — リーダーが事前ロード):
+        --- R7 専門知識 ---
         {R7_CONTENT}
-        --- R8 사건상세 ---
+        --- R8 事件詳細 ---
         {R8_CONTENT}
 
-        (요약이 불충분하면 큰 설계 문서 원본을 Read할 수 있으나, 권한 승인이 필요할 수 있음)
+        (要約が不十分なら大きな設計文書の原本を Read できるが、権限承認が必要となる場合がある)
 
-        대상 화수 구간: {N}~{M}화
-        세부 캐릭터 시트를 작성하세요.
+        対象話数区間: {N}〜{M}話
+        詳細キャラクターシートを作成してください。
 
-        ★ 집단 캐릭터 이름 부여 규칙:
-        - R1/R2/R3/R4, 인턴, 수간호사 등 직급 캐릭터 중
-          해당 화수 구간에서 대사가 2회 이상인 인물은 반드시 한국어 이름을 부여하라.
-        - '이름' 열에는 실제 이름을, '관계' 열에는 직급(R3 레지던트 등)을 기입하라.
-        - plot-hook-engineer가 에피소드별 비트에서 직급 코드 대신 이름을 사용할 수 있게 한다.
+        ★ 集団キャラクター名付与ルール:
+        - R1/R2/R3/R4、インターン、看護師長など職位キャラクターのうち、
+          当該話数区間でセリフが 2 回以上ある人物には必ず日本語名を付与せよ。
+        - 「氏名」列には実際の名前を、「関係」列には職位（R3 レジデントなど）を記入せよ。
+        - plot-hook-engineer がエピソード別ビートで職位コードではなく名前を使用できるようにする。
 
-        출력: _workspace/04_character-architect_detail.md
-        완료 후 리더에게 SendMessage로 완료를 보고하세요:
-        '세부 캐릭터 시트 작성 완료. _workspace/04_character-architect_detail.md에 저장.'
-        (리더가 plot-hook-engineer에게 핸드오프합니다. PHE에게 직접 SendMessage하지 마세요.)"
+        出力: _workspace/04_character-architect_detail.md
+        完了後リーダーへ SendMessage で完了を報告してください:
+        '詳細キャラクターシート作成完了。_workspace/04_character-architect_detail.md に保存。'
+        (リーダーが plot-hook-engineer にハンドオフします。PHE に直接 SendMessage しないでください。)"
     },
     {
       name: "plot-hook-engineer",
       agent_type: "general-purpose",
-      prompt: "당신은 plot-hook-engineer 에이전트입니다.
-        ${CLAUDE_PLUGIN_ROOT}/agents/plot-hook-engineer.md를 읽고 역할을 숙지하세요.
-        ${CLAUDE_PLUGIN_ROOT}/skills/plot-hook/SKILL.md를 읽고 모드 B(작은 설계) 절차와 출력 템플릿을 따르세요.
-        ${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md를 읽고 장르 DNA 프레임워크를 숙지하세요.
+      prompt: "あなたは plot-hook-engineer エージェントです。
+        ${CLAUDE_PLUGIN_ROOT}/agents/plot-hook-engineer.md を読み役割を熟知してください。
+        ${CLAUDE_PLUGIN_ROOT}/skills/plot-hook/SKILL.md を読みモード B（小さな設計）の手順と出力テンプレートに従ってください。
+        ${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md を読みジャンル DNA フレームワークを熟知してください。
 
-        ★ 큰 설계 요약 (Read 불필요 — 리더가 사전 로드):
-        --- 부트스트랩 요약 ---
+        ★ 大きな設計の要約 (Read 不要 — リーダーが事前ロード):
+        --- ブートストラップ要約 ---
         {BOOTSTRAP_EXCERPT}
-        --- 캐릭터시트 요약 ---
+        --- キャラクターシート要約 ---
         {CHARACTER_EXCERPT}
-        --- 플롯훅가이드 요약 ---
+        --- プロットフックガイド要約 ---
         {PLOT_EXCERPT}
 
-        리더로부터 SendMessage를 수신하는 즉시 작업을 시작하세요. 별도 확인이나 대기 없이 즉시 시작합니다.
-        _workspace/04_character-architect_detail.md를 Read하여 세부 캐릭터 시트를 숙지한 뒤
-        세부 플롯/훅 가이드를 작성하세요.
+        リーダーから SendMessage を受信したら直ちに作業を開始してください。別途確認や待機なしに即座に開始します。
+        _workspace/04_character-architect_detail.md を Read して詳細キャラクターシートを熟知した上で、
+        詳細プロット/フックガイドを作成してください。
 
-        ★ 자동 리서치 결과 (Read 불필요 — 리더가 사전 로드):
-        --- R7 전문지식 ---
+        ★ 自動リサーチ結果 (Read 不要 — リーダーが事前ロード):
+        --- R7 専門知識 ---
         {R7_CONTENT}
-        --- R8 사건상세 ---
+        --- R8 事件詳細 ---
         {R8_CONTENT}
 
-        (요약이 불충분하면 큰 설계 문서 원본을 Read할 수 있으나, 권한 승인이 필요할 수 있음)
+        (要約が不十分なら大きな設計文書の原本を Read できるが、権限承認が必要となる場合がある)
 
-        대상 화수 구간: {N}~{M}화
+        対象話数区間: {N}〜{M}話
 
-        ★ 이름 사용 규칙:
-        에피소드별 비트·클리프행어에 등장하는 인물은 직급 코드(R1, R3 등)가 아닌
-        세부 캐릭터 시트에 정의된 실제 이름으로 표기하라.
+        ★ 名前使用ルール:
+        エピソード別ビート・クリフハンガーに登場する人物は職位コード（R1、R3 など）ではなく、
+        詳細キャラクターシートに定義された実際の名前で表記せよ。
 
-        출력: _workspace/05_plot-hook-engineer_detail.md"
+        出力: _workspace/05_plot-hook-engineer_detail.md"
     }
   ]
 )
 ```
 
-작업 등록:
+タスク登録:
 ```
 TaskCreate(tasks: [
-  { title: "세부 캐릭터 시트 작성 ({N}~{M}화)", assignee: "character-architect" },
-  { title: "세부 플롯/훅 가이드 작성 ({N}~{M}화)", assignee: "plot-hook-engineer",
-    depends_on: ["세부 캐릭터 시트 작성 ({N}~{M}화)"] }
+  { title: "詳細キャラクターシート作成 ({N}〜{M}話)", assignee: "character-architect" },
+  { title: "詳細プロット/フックガイド作成 ({N}〜{M}話)", assignee: "plot-hook-engineer",
+    depends_on: ["詳細キャラクターシート作成 ({N}〜{M}話)"] }
 ])
 ```
 
-### Phase 3: 작은 설계 수행
+### Phase 3: 小さな設計の実行
 
-**실행 방식:** 리더 중재 파이프라인
+**実行方式:** リーダー仲介パイプライン
 
-**Step 3-1**: character-architect 완료 대기
-- `_workspace/04_character-architect_detail.md` 존재 여부를 Bash로 확인
-- 미완료 시 60초 대기 후 재확인 (최대 5회)
+**Step 3-1**: character-architect の完了待機
+- `_workspace/04_character-architect_detail.md` の存在有無を Bash で確認
+- 未完了なら 60 秒待機後に再確認（最大 5 回）
 
-**Step 3-2**: 리더 핸드오프
-character-architect 완료 확인 즉시:
-1. 리더가 `_workspace/04_character-architect_detail.md`를 Read
-2. 핵심 내용 요약 추출:
-   - 주인공 감정 곡선 요약
-   - 신규 캐릭터 리스트와 등장 화수
-   - 적대자 활동 타임라인
-3. 리더가 plot-hook-engineer에게 직접 SendMessage:
-   "character-architect 작업 완료.
-   세부 캐릭터 시트: _workspace/04_character-architect_detail.md
-   [핵심 요약 첨부]
-   즉시 세부 플롯/훅 가이드 작성을 시작하세요.
-   출력: _workspace/05_plot-hook-engineer_detail.md"
+**Step 3-2**: リーダーのハンドオフ
+character-architect 完了確認後ただちに:
+1. リーダーが `_workspace/04_character-architect_detail.md` を Read
+2. 核心内容の要約を抽出:
+   - 主人公の感情曲線要約
+   - 新規キャラクターリストと登場話数
+   - 敵対者活動タイムライン
+3. リーダーが plot-hook-engineer に直接 SendMessage:
+   "character-architect 作業完了。
+   詳細キャラクターシート: _workspace/04_character-architect_detail.md
+   [核心要約添付]
+   ただちに詳細プロット/フックガイドの作成を開始してください。
+   出力: _workspace/05_plot-hook-engineer_detail.md"
 
-**Step 3-3**: plot-hook-engineer 완료 대기
-- `_workspace/05_plot-hook-engineer_detail.md` 존재 여부를 Bash로 확인 (최대 5회, 60초 간격)
-- 2회 확인 후에도 미생성이면 리더가 재차 SendMessage로 작업 시작 요청
-- 4회 확인 후에도 미생성이면 에러 핸들링 (PHE 실패로 간주)
+**Step 3-3**: plot-hook-engineer の完了待機
+- `_workspace/05_plot-hook-engineer_detail.md` の存在有無を Bash で確認（最大 5 回、60 秒間隔）
+- 2 回確認しても未生成ならリーダーが再度 SendMessage で作業開始を要請
+- 4 回確認しても未生成ならエラーハンドリング（PHE 失敗とみなす）
 
-**작은 설계 중 모순 발견 시:**
-- concept-builder는 참여하지 않으므로, 부트스트랩 수정이 필요하면 리더가 직접 `{작품가제}_부트스트랩.md`를 수정
-- 수정 내역을 `_workspace/06_bootstrap_amendments.md`에 기록
-- 부트스트랩은 여전히 source of truth
+**小さな設計中に矛盾を発見した場合:**
+- concept-builder は参加しないため、ブートストラップの修正が必要ならリーダーが直接 `{作品仮題}_ブートストラップ.md` を修正
+- 修正履歴を `_workspace/06_bootstrap_amendments.md` に記録
+- ブートストラップは依然として source of truth
 
-**산출물 저장:**
+**成果物保存:**
 
-| 팀원 | 출력 경로 |
+| チームメンバー | 出力パス |
 |------|----------|
 | character-architect | `_workspace/04_character-architect_detail.md` |
 | plot-hook-engineer | `_workspace/05_plot-hook-engineer_detail.md` |
 
-### Phase 4: 통합 검증 및 정리
+### Phase 4: 統合検証および整理
 
-1. 각 팀원의 산출물을 Read로 수집
-2. **일관성 검증 체크리스트:**
-   - [ ] 세부 캐릭터의 등장 화수가 세부 플롯의 에피소드 배치와 일치하는가
-   - [ ] 주인공의 감정 곡선이 단조롭지 않은가
-   - [ ] 신규 캐릭터가 3명 이내인가 (초반 과다 등장 방지)
-   - [ ] VIP 조우 이벤트가 10~15화 간격으로 배치되었는가
-   - [ ] 적대자 활동이 카타르시스 리듬과 연동되는가
-   - [ ] 전문 지식 활용 장면이 리서치 자료의 실제 기술/사례에 기반하는가
-   - [ ] 핵심 역량 모듈 활용 장면의 날짜/인물/결과가 사건 상세 자료와 일치하는가
-   - 모순 발견 시: 큰 설계 문서 기준으로 수정
+1. 各チームメンバーの成果物を Read で収集
+2. **一貫性検証チェックリスト:**
+   - [ ] 詳細キャラクターの登場話数が詳細プロットのエピソード配置と一致するか
+   - [ ] 主人公の感情曲線が単調でないか
+   - [ ] 新規キャラクターが 3 名以内か（序盤の過剰登場防止）
+   - [ ] VIP 遭遇イベントが 10〜15 話間隔で配置されているか
+   - [ ] 敵対者の活動がカタルシスリズムと連動するか
+   - [ ] 専門知識活用シーンがリサーチ資料の実際の技術/事例に基づくか
+   - [ ] 核心力量モジュール活用シーンの日付/人物/結果が事件詳細資料と一致するか
+   - 矛盾発見時: 大きな設計文書を基準に修正
 
-3. 최종 산출물을 `{DESIGN_DIR}`에 복사 (novel-config.md의 경로와 일치시킴):
+3. 最終成果物を `{DESIGN_DIR}` にコピー（novel-config.md のパスと一致させる）:
 
-| 중간 산출물 | 최종 경로 |
+| 中間成果物 | 最終パス |
 |-----------|----------|
-| `_workspace/04_*_detail.md` | `{DESIGN_DIR}/{작품가제}_세부캐릭터시트_{N}~{M}화.md` |
-| `_workspace/05_*_detail.md` | `{DESIGN_DIR}/{작품가제}_세부플롯훅가이드_{N}~{M}화.md` |
+| `_workspace/04_*_detail.md` | `{DESIGN_DIR}/{作品仮題}_詳細キャラクターシート_{N}〜{M}話.md` |
+| `_workspace/05_*_detail.md` | `{DESIGN_DIR}/{作品仮題}_詳細プロットフックガイド_{N}〜{M}話.md` |
 
-   > **경로 일관성 원칙**: novel-config.md의 `design_dir`과 실제 파일 위치를 반드시 일치시킨다.
+   > **パス一貫性原則**: novel-config.md の `design_dir` と実際のファイル位置を必ず一致させる。
 
-4. **novel-config.md 자동 업데이트** (작은 설계 산출물을 다운스트림 스킬에 연결):
+4. **novel-config.md 自動アップデート** (小さな設計の成果物をダウンストリームスキルに連結):
 
-   novel-config.md를 Read한 후, 아래 필드를 자동으로 추가/갱신한다:
+   novel-config.md を Read した後、下記フィールドを自動で追加/更新する:
 
    ```
-   업데이트 항목:
-   a) EP 범위별 설정문서 테이블의 해당 행에 세부 문서 경로 추가:
-      - 세부 플롯 가이드 열: {DESIGN_DIR}/{작품가제}_세부플롯훅가이드_{N}~{M}화.md
-      - 세부 캐릭터 시트 열: {DESIGN_DIR}/{작품가제}_세부캐릭터시트_{N}~{M}화.md
-      (기존 행의 EP 범위가 일치하면 해당 열만 갱신, 범위가 없으면 새 행 추가)
-   b) 공통 문서의 character_detail은 변경하지 않는다 (큰 설계 캐릭터시트를 유지).
-      EP 범위별 세부 캐릭터 시트가 있으면 create/polish가 ep_range_table에서 우선 참조한다.
-   c) R7/R8 리서치 결과 참조 경로 (보조 참조 섹션 — EP 범위별 배열):
-      기존 research_r7/r8 항목이 있으면 **배열에 추가** (덮어쓰지 않음):
+   アップデート項目:
+   a) EP 範囲別の設定文書テーブルの該当行に詳細文書のパスを追加:
+      - 詳細プロットガイド列: {DESIGN_DIR}/{作品仮題}_詳細プロットフックガイド_{N}〜{M}話.md
+      - 詳細キャラクターシート列: {DESIGN_DIR}/{作品仮題}_詳細キャラクターシート_{N}〜{M}話.md
+      (既存行の EP 範囲が一致すれば該当列のみ更新、範囲がなければ新規行追加)
+   b) 共通文書の character_detail は変更しない（大きな設計のキャラクターシートを維持）。
+      EP 範囲別の詳細キャラクターシートがあれば create/polish が ep_range_table から優先参照する。
+   c) R7/R8 リサーチ結果参照パス（補助参照セクション — EP 範囲別配列）:
+      既存の research_r7/r8 項目があれば**配列に追加**（上書きしない）:
       - research_r7:
-        - { range: "EP{N}~EP{M}", path: "_workspace/00_research/R7_전문지식_{N}~{M}화.md" }
+        - { range: "EP{N}〜EP{M}", path: "_workspace/00_research/R7_専門知識_{N}〜{M}話.md" }
       - research_r8:
-        - { range: "EP{N}~EP{M}", path: "_workspace/00_research/R8_사건상세_{N}~{M}화.md" }
-      동일 EP 범위의 기존 항목이 있으면 해당 항목만 덮어쓴다.
+        - { range: "EP{N}〜EP{M}", path: "_workspace/00_research/R8_事件詳細_{N}〜{M}話.md" }
+      同一 EP 範囲の既存項目があれば該当項目のみ上書きする。
    ```
 
-   novel-config.md를 Read한 후 즉시 업데이트를 적용한다 (비대화형).
-   업데이트 완료 후 변경 내역을 사용자에게 출력한다 (사전 확인 요청 없음).
+   novel-config.md を Read した後ただちにアップデートを適用する（非対話型）。
+   アップデート完了後、変更履歴をユーザーに出力する（事前確認要請なし）。
 
-5. **팀원 종료 요청**
-   - SendMessage(to: "character-architect", message: "작업 완료. 종료하세요.")
-   - SendMessage(to: "plot-hook-engineer", message: "작업 완료. 종료하세요.")
-   - 5초 대기 (팀원 종료 시간 확보)
+5. **チームメンバー終了要請**
+   - SendMessage(to: "character-architect", message: "作業完了。終了してください。")
+   - SendMessage(to: "plot-hook-engineer", message: "作業完了。終了してください。")
+   - 5 秒待機（チームメンバー終了時間の確保）
 
-6. **TeamDelete("design-small-team")** — 팀 즉시 해산
-   ⚠️ 팀원 종료 SendMessage 후 즉시 실행. 사용자 응답 대기 없음.
-   TeamDelete 실패 시:
-   - 10초 대기 후 1회 재시도
-   - 재실패 시 에러를 무시하고 다음 스텝으로 진행
-     (다음 TeamCreate 시 Phase 2 안전 점검에서 기존 팀을 삭제)
+6. **TeamDelete("design-small-team")** — チーム即時解散
+   ⚠️ チームメンバー終了 SendMessage 後ただちに実行する。ユーザー応答待機なし。
+   TeamDelete 失敗時:
+   - 10 秒待機後 1 回再試行
+   - 再失敗時はエラーを無視し次ステップへ進行
+     (次回 TeamCreate 時に Phase 2 安全点検で既存チームを削除)
 
-7. `_workspace/` 디렉토리 보존 (사후 검증용)
+7. `_workspace/` ディレクトリの保存（事後検証用）
 
-8. 사용자에게 결과 요약 + 다음 25화 구간 작은 설계 안내:
+8. ユーザーへ結果要約 + 次の 25 話区間の小さな設計を案内:
    ```
-   ## 작은 설계 완료 ({N}~{M}화)
+   ## 小さな設計完了 ({N}〜{M}話)
 
-   산출물:
-   - {DESIGN_DIR}/{작품가제}_세부캐릭터시트_{N}~{M}화.md
-   - {DESIGN_DIR}/{작품가제}_세부플롯훅가이드_{N}~{M}화.md
+   成果物:
+   - {DESIGN_DIR}/{作品仮題}_詳細キャラクターシート_{N}〜{M}話.md
+   - {DESIGN_DIR}/{作品仮題}_詳細プロットフックガイド_{N}〜{M}話.md
 
-   다음 구간 작은 설계를 진행하시겠습니까?
-   → 다음 범위: {M+1}~{M+25}화
-   '작은 설계 {M+1}~{M+25}화' 라고 말씀하시면 바로 시작합니다.
+   次の区間の小さな設計を進めますか？
+   → 次の範囲: {M+1}〜{M+25}話
+   「小さな設計 {M+1}〜{M+25}話」とおっしゃればすぐに開始します。
    ```
 
-## R7/R8 리서치 결과 활용 경로
+## R7/R8 リサーチ結果の活用経路
 
-domain-researcher가 생성하는 R7(전문지식)/R8(사건상세) 리서치 결과는 **세부 설계 문서에 녹아드는 방식**으로 활용된다.
-다운스트림 스킬(create/polish/rewrite)에서 직접 참조하지 않는다.
+domain-researcher が生成する R7（専門知識）/R8（事件詳細）リサーチ結果は**詳細設計文書に溶け込む方式**で活用される。
+ダウンストリームスキル（create/polish/rewrite）から直接参照することはない。
 
 ```
-활용 흐름:
-R7 → character-architect의 세부 캐릭터 시트에 반영 (전문 지식 활용 장면 디테일)
-R7 → plot-hook-engineer의 세부 플롯에 반영 (기술적 디테일의 에피소드 배치)
-R8 → character-architect의 적대자 활동에 반영 (실제 사건 기반 타임라인)
-R8 → plot-hook-engineer의 에피소드별 사건에 반영 (정확한 날짜/전조 신호)
+活用フロー:
+R7 → character-architect の詳細キャラクターシートに反映 (専門知識活用シーンのディテール)
+R7 → plot-hook-engineer の詳細プロットに反映 (技術的ディテールのエピソード配置)
+R8 → character-architect の敵対者活動に反映 (実際の事件に基づくタイムライン)
+R8 → plot-hook-engineer のエピソード別事件に反映 (正確な日付/前兆シグナル)
 
-최종 산출물 (세부캐릭터시트, 세부플롯훅가이드)에 리서치가 내재화되므로,
-create/polish/rewrite는 산출물만 읽으면 리서치 내용이 자동으로 반영된다.
+最終成果物 (詳細キャラクターシート、詳細プロットフックガイド) にリサーチが内在化されるため、
+create/polish/rewrite は成果物を読むだけでリサーチ内容が自動で反映される。
 
-참고 경로 (novel-config.md 보조 참조):
-- research_r7: _workspace/00_research/R7_전문지식_{N}~{M}화.md
-- research_r8: _workspace/00_research/R8_사건상세_{N}~{M}화.md
-→ 필요 시 수동 조회 가능
+参考パス (novel-config.md 補助参照):
+- research_r7: _workspace/00_research/R7_専門知識_{N}〜{M}話.md
+- research_r8: _workspace/00_research/R8_事件詳細_{N}〜{M}話.md
+→ 必要に応じて手動照会可能
 ```
 
-## 에러 핸들링
+## エラーハンドリング
 
-| 상황 | 전략 |
+| 状況 | 戦略 |
 |------|------|
-| 큰 설계 문서 3종 중 일부 누락 | Phase 1에서 감지. 누락 문서 없이는 작은 설계 불가 → 사용자에게 큰 설계 먼저 완료하도록 안내 |
-| 큰 설계 문서의 포맷이 다름 | Phase 1에서 핵심 섹션(아크 구조, 핵심 역량 모듈, 적대자 계층) 존재 여부 확인. 핵심 섹션 부재 시 보완 요청 |
-| 요청 화수 구간이 아크 구조와 불일치 | 아크 경계를 사용자에게 안내하고 구간 조정 제안 |
-| domain-researcher 실패 | 1회 재시도. 재실패 시 큰 설계 문서 + genre-dna 기반으로 진행, 보고서에 "자동 리서치 미반영" 명시 |
-| character-architect 실패 | 1회 재시도. 재실패 시 리더가 큰 설계 캐릭터 시트 기반 기본 세부 시트 생성 |
-| plot-hook-engineer 실패 | 1회 재시도. 재실패 시 큰 설계 플롯 가이드 + 세부 캐릭터 시트로 기본 세부 플롯 생성 |
-| 팀원 간 통신 지연 | 리더가 중간에서 파일을 Read하여 수동으로 정보 전달 |
-| 리서치 파일 Read 실패 | 리더가 "(리서치 미완료)" 텍스트를 프롬프트에 임베드. 팀원은 큰 설계 요약 기반으로 진행 |
+| 大きな設計文書 3 種のうち一部欠落 | Phase 1 で検知。欠落文書なしには小さな設計不可 → ユーザーに大きな設計の先行完了を案内 |
+| 大きな設計文書のフォーマットが異なる | Phase 1 で核心セクション（アーク構造、核心力量モジュール、敵対者階層）の存在有無を確認。核心セクション不在時は補完を要請 |
+| 要請話数区間がアーク構造と不一致 | アーク境界をユーザーに案内し区間調整を提案 |
+| domain-researcher 失敗 | 1 回再試行。再失敗時は大きな設計文書 + genre-dna に基づいて進行し、レポートに「自動リサーチ未反映」を明記 |
+| character-architect 失敗 | 1 回再試行。再失敗時はリーダーが大きな設計のキャラクターシートに基づき基本詳細シートを生成 |
+| plot-hook-engineer 失敗 | 1 回再試行。再失敗時は大きな設計プロットガイド + 詳細キャラクターシートで基本詳細プロットを生成 |
+| チームメンバー間の通信遅延 | リーダーが中間でファイルを Read し手動で情報伝達 |
+| リサーチファイル Read 失敗 | リーダーが「(リサーチ未完了)」テキストをプロンプトに埋め込む。チームメンバーは大きな設計の要約に基づき進行 |
 
-## 데이터 흐름
+## データフロー
 
 ```
-[사용자] → 작은 설계 요청 (화수 구간)
+[ユーザー] → 小さな設計要請 (話数区間)
     ↓
-Phase 1: 범위 확인 + 큰 설계 문서 점검
+Phase 1: 範囲確認 + 大きな設計文書の点検
     ↓
-Phase 1.5: domain-researcher 서브에이전트 → _workspace/00_research/ (R7, R8)
-    ↓ (사용자 대기 없음)
-Phase 2: TeamCreate("design-small-team") — 리서치 결과 포함
+Phase 1.5: domain-researcher サブエージェント → _workspace/00_research/ (R7、R8)
+    ↓ (ユーザー待機なし)
+Phase 2: TeamCreate("design-small-team") — リサーチ結果を含む
     ↓
 Phase 3: character-architect → plot-hook-engineer
     ↓
-Phase 4: 통합 검증 → 산출물 2종
+Phase 4: 統合検証 → 成果物 2 種
     ↓
-다음 아크 안내
+次のアーク案内
 ```
 
-## 테스트 시나리오
+## テストシナリオ
 
-### 정상 흐름
-1. 사용자가 "1~50화 작은 설계 해줘" 요청
-2. Phase 1에서 큰 설계 문서 3종 확인, 아크 개요 추출
-3. Phase 1.5에서 domain-researcher가 R7(전문 지식) + R8(사건 상세) 자동 리서치
-4. Phase 2에서 팀 구성 (리서치 결과 포함)
-5. Phase 3에서 CA→PHE 순서로 작은 설계 완성
-6. Phase 4에서 검증 후 산출물 2종 + 다음 아크 안내
+### 正常フロー
+1. ユーザーが「1〜50 話の小さな設計をしてくれ」と要請
+2. Phase 1 で大きな設計文書 3 種を確認、アーク概要を抽出
+3. Phase 1.5 で domain-researcher が R7（専門知識）+ R8（事件詳細）を自動リサーチ
+4. Phase 2 でチーム編成（リサーチ結果を含む）
+5. Phase 3 で CA→PHE の順序で小さな設計を完成
+6. Phase 4 で検証後、成果物 2 種 + 次のアーク案内
 
-### 에러 흐름
-1. Phase 1에서 `{작품가제}_플롯훅가이드.md` 누락 감지
-2. 사용자에게 "플롯 훅 가이드가 없습니다. 큰 설계(design-big)를 먼저 완료해주세요." 안내
-3. 작은 설계 중단
+### エラーフロー
+1. Phase 1 で `{作品仮題}_プロットフックガイド.md` の欠落を検知
+2. ユーザーに「プロットフックガイドがありません。大きな設計（design-big）を先に完了してください。」と案内
+3. 小さな設計を中断

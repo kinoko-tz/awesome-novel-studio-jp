@@ -1,136 +1,136 @@
 ---
 name: design-big
-description: "웹소설의 큰 설계(전체 소설)를 수행하는 오케스트레이터. 부트스트랩+캐릭터 시트+플롯 훅 가이드를 생성한다. 자동 리서치(domain-researcher 서브에이전트)로 전문 분야 자료를 수집한 후 설계를 진행한다. '큰 설계', '전체 소설 설계', '소설 설계', '부트스트랩부터 캐릭터 플롯까지' 요청에 이 스킬을 사용할 것. 통합 설계(큰+작은 둘 다)나 모호한 요청은 design 라우터를, 작은 설계만 필요하면 design-small을, 단일 영역만 필요하면 bootstrap/character/plot-hook을 사용하라."
+description: "Web 小説の大設計 (作品全体) を実行するオーケストレーター。ブートストラップ + キャラクターシート + プロットフックガイドを生成する。自動リサーチ (domain-researcher サブエージェント) で専門分野の資料を収集した後に設計を進める。「大設計」「作品全体設計」「小説設計」「ブートストラップからキャラクター・プロットまで」といった依頼にはこのスキルを使うこと。統合設計 (大 + 小の両方) や曖昧な依頼には design ルーターを、小設計のみが必要なら design-small を、単一領域のみ必要なら bootstrap/character/plot-hook を使うこと。"
 ---
 
-# Novel Design Big — 큰 설계 오케스트레이터
+# Novel Design Big — 大設計オーケストレーター
 
-웹소설의 전체 소설 설계를 수행한다. AI가 장르 DNA 프레임워크로 뼈대를 세우고, domain-researcher 서브에이전트가 자동 리서치로 전문 분야의 살을 붙이는 구조.
+Web 小説の作品全体設計を実行する。AI がジャンル DNA フレームワークで骨格を立て、domain-researcher サブエージェントが自動リサーチで専門分野の肉付けを行う構造である。
 
-## 실행 모드: 에이전트 팀
+## 実行モード: エージェントチーム
 
-## 에이전트 구성
+## エージェント構成
 
-| 팀원 | 에이전트 파일 | 역할 | 스킬 | 출력 |
+| チームメンバー | エージェントファイル | 役割 | スキル | 出力 |
 |------|-------------|------|------|------|
-| concept-builder | `${CLAUDE_PLUGIN_ROOT}/agents/concept-builder.md` | 부트스트랩 설계 | bootstrap | 부트스트랩 문서 |
-| character-architect | `${CLAUDE_PLUGIN_ROOT}/agents/character-architect.md` | 캐릭터 설계 | character | 캐릭터 시트 |
-| plot-hook-engineer | `${CLAUDE_PLUGIN_ROOT}/agents/plot-hook-engineer.md` | 플롯/훅 설계 | plot-hook | 플롯 훅 가이드 |
+| concept-builder | `${CLAUDE_PLUGIN_ROOT}/agents/concept-builder.md` | ブートストラップ設計 | bootstrap | ブートストラップ文書 |
+| character-architect | `${CLAUDE_PLUGIN_ROOT}/agents/character-architect.md` | キャラクター設計 | character | キャラクターシート |
+| plot-hook-engineer | `${CLAUDE_PLUGIN_ROOT}/agents/plot-hook-engineer.md` | プロット/フック設計 | plot-hook | プロットフックガイド |
 
-**domain-researcher는 팀원이 아닌 서브에이전트**로, Phase 1.5에서 팀 구성(TeamCreate) 전에 실행된다.
+**domain-researcher はチームメンバーではなくサブエージェント**であり、Phase 1.5 でチーム構成 (TeamCreate) 前に実行される。
 
-## 공유 레퍼런스
+## 共有レファレンス
 
-- **genre-dna-framework.md 위치**: `${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md` (라우터 하위 — big/small 공용)
+- **genre-dna-framework.md の位置**: `${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md` (ルーター配下 — big/small 共用)
 
-## 워크플로우
+## ワークフロー
 
-### Phase 0: 기존 설계 확인 (선택)
+### Phase 0: 既存設計の確認 (任意)
 
-> 프로젝트 루트에 기존 큰 설계 산출물(`{작품가제}_부트스트랩.md`, `{작품가제}_캐릭터시트.md`, `{작품가제}_플롯훅가이드.md`)이 존재할 때만 실행. 없으면 Phase 1로 직행.
+> プロジェクトルートに既存の大設計成果物 (`{作品仮題}_ブートストラップ.md`、`{作品仮題}_キャラクターシート.md`、`{作品仮題}_プロットフックガイド.md`) が存在する場合のみ実行する。なければ Phase 1 へ直行する。
 
-1. 프로젝트 루트에서 기존 큰 설계 산출물을 Glob으로 확인
-2. 기존 산출물이 발견되면 사용자에게 모드 선택 요청:
+1. プロジェクトルートで既存の大設計成果物を Glob で確認する
+2. 既存成果物が見つかった場合、ユーザーにモード選択を依頼する:
 
 ```
-기존 큰 설계 문서가 발견되었습니다:
-- {발견된 파일 목록}
+既存の大設計文書が見つかりました:
+- {見つかったファイル一覧}
 
-다음 중 선택해주세요:
-1. **전체 재설계** — 기존 문서를 _workspace/_backup/에 백업 후 처음부터 다시 설계
-2. **부분 수정** — 특정 영역만 재실행 (예: 부트스트랩만, 캐릭터만, 플롯만)
-3. **자료 보강 후 재설계** — 새 리서치 자료를 추가한 뒤 기존 설계를 업그레이드
+以下から選択してください:
+1. **全体再設計** — 既存文書を _workspace/_backup/ にバックアップしてから最初から設計し直す
+2. **部分修正** — 特定領域のみ再実行 (例: ブートストラップのみ、キャラクターのみ、プロットのみ)
+3. **資料補強後の再設計** — 新規リサーチ資料を追加した後に既存設計をアップグレードする
 ```
 
-3. 모드별 처리:
-   - **전체 재설계**: 기존 산출물을 `_workspace/_backup/{timestamp}/`에 복사 → Phase 1부터 진행
-   - **부분 수정**: 수정 대상 에이전트만 재실행. 나머지 산출물은 유지. Phase 2에서 해당 에이전트만 팀에 포함.
-   - **자료 보강 후 재설계**: 기존 `_workspace/00_concept_analysis.md`에서 컨셉 복원 → Phase 1 스킵 → Phase 1.5부터 진행
+3. モード別の処理:
+   - **全体再設計**: 既存成果物を `_workspace/_backup/{timestamp}/` にコピー → Phase 1 から進行
+   - **部分修正**: 修正対象のエージェントのみ再実行する。残りの成果物は維持する。Phase 2 で当該エージェントのみチームに含める
+   - **資料補強後の再設計**: 既存の `_workspace/00_concept_analysis.md` からコンセプトを復元 → Phase 1 をスキップ → Phase 1.5 から進行
 
-### Phase 1: 컨셉 분석 및 방향 수립
+### Phase 1: コンセプト分析と方向性の確立
 
-1. **제안서 자동 연결** (강화):
-   - 프로젝트 루트에서 `*_제안서.md` 패턴을 Glob으로 탐색한다
-   - 발견되면 Read하여 제안서의 **컨셉, 장르, 플랫폼, 차별화 포인트, 로그라인**을 자동 추출한다
-   - 추출된 플랫폼은 반드시 아래 허용 플랫폼 집합으로 검증한다:
-     - 문피아, 네이버시리즈, 카카오페이지, 리디, 조아라, 노벨피아
-   - `Munpia`, `munpia`, `문 피아`, `카카페`, `KakaoPage`, `리디북스`, `NovelPia` 등 허용 별칭은 canonical name으로 정규화한다
-   - 허용되지 않는 플랫폼 또는 모호한 별칭이면 자동 반영하지 않고, 사용자에게 제안서 수정 또는 플랫폼 재선택을 요청한다
-   - 추출된 정보로 Phase 1의 컨셉 분석을 사전 채운다 (사용자에게 확인 요청)
-   - 제안서의 `_workspace/00_research/` 디렉토리도 확인하여 기존 R1/R2/R5 리서치가 있으면 Phase 1.5에서 재활용한다
-   - 제안서가 없으면: 사용자 입력에서 직접 분석 (기존 동작)
+1. **提案書の自動連携** (強化):
+   - プロジェクトルートで `*_提案書.md` パターンを Glob で探索する
+   - 見つかったら Read して、提案書の **コンセプト、ジャンル、プラットフォーム、差別化ポイント、ログライン** を自動抽出する
+   - 抽出されたプラットフォームは必ず以下の許容プラットフォーム集合で検証する:
+     - カクヨム、小説家になろう、アルファポリス、ノベルアップ+、エブリスタ、ノベルピア
+   - `Kakuyomu`、`kakuyomu`、`カクヨム` のような表記揺れや別名は canonical name に正規化する
+   - 許容されないプラットフォームや曖昧な別名であれば自動反映せず、ユーザーに提案書の修正またはプラットフォーム再選択を依頼する
+   - 抽出した情報で Phase 1 のコンセプト分析を事前に埋める (ユーザーに確認を依頼する)
+   - 提案書の `_workspace/00_research/` ディレクトリも確認し、既存の R1/R2/R5 リサーチがあれば Phase 1.5 で再利用する
+   - 提案書がない場合: ユーザー入力から直接分析する (従来動作)
    ```
-   제안서 '{파일명}'을(를) 발견했습니다.
-   다음 컨셉으로 큰 설계를 진행합니다:
-   - 장르: {제안서에서 추출}
-   - 컨셉: {제안서에서 추출}
-   - 플랫폼: {제안서에서 추출}
-   - 차별화: {제안서에서 추출}
+   提案書 '{ファイル名}' を発見しました。
+   以下のコンセプトで大設計を進めます:
+   - ジャンル: {提案書から抽出}
+   - コンセプト: {提案書から抽出}
+   - プラットフォーム: {提案書から抽出}
+   - 差別化: {提案書から抽出}
 
-   수정하실 부분이 있으면 말씀해주세요. 없으면 바로 진행합니다.
+   修正したい部分があれば教えてください。なければそのまま進行します。
    ```
-2. 사용자 입력 분석 — 소설 컨셉, 직업, 분위기, 차별화 방향 파악
-   - 타겟 플랫폼이 명시되지 않았으면 한국 플랫폼 6개 중 하나를 확인한다
-   - 타겟 플랫폼이 비지원 값이면 자동 치환하지 않고 재선택을 요청한다
-3. `${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md`를 읽어 장르 DNA 프레임워크 확인
-4. 프로젝트 루트의 참고 문서 확인 (존재 시)
-5. **컨셉 방향 요약**을 사용자에게 제시하여 확인:
-   - 주인공 직업/전문 분야
-   - 서사 기점 (시대, 계기)
-   - 핵심 차별화 포인트
-   - 타겟 플랫폼 (문피아, 네이버시리즈, 카카오페이지, 리디, 조아라, 노벨피아 중 1개)
-   - 예상 톤 & 무드
-   - 유사 작품군 2~3개 (리더가 genre-dna 차별화 전략 + 업계 상식으로 제안)
-6. **`{작품가제}` 확정** — 사용자에게 작품 가제를 확인한다. 이 가제가 이후 모든 파일명의 접두사로 사용된다.
-7. Phase 1 결과를 `_workspace/00_concept_analysis.md`에 저장 — 새 대화 시작 시에도 컨셉을 복원할 수 있도록 한다. 저장 내용: 작품가제, 전문 분야, 서사 기점, 차별화 포인트, 유사 작품군, 톤 & 무드.
-8. 사용자 확인 후 → Phase 1.5로 진행
+2. ユーザー入力の分析 — 小説のコンセプト、職業、ムード、差別化方針を把握する
+   - ターゲットプラットフォームが明示されていない場合、投稿プラットフォーム 6 個のうちいずれかを確認する
+   - ターゲットプラットフォームが非対応値であれば自動置換せず再選択を依頼する
+3. `${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md` を読み、ジャンル DNA フレームワークを確認する
+4. プロジェクトルートの参考文書を確認する (存在時)
+5. **コンセプト方向性の要約** をユーザーに提示して確認する:
+   - 主人公の職業/専門分野
+   - 物語の起点 (時代、契機)
+   - 中核となる差別化ポイント
+   - ターゲットプラットフォーム (カクヨム、小説家になろう、アルファポリス、ノベルアップ+、エブリスタ、ノベルピアのうち 1 個)
+   - 想定トーン & ムード
+   - 類似作品群 2~3 作 (リーダーが genre-dna 差別化戦略 + 業界知見から提案)
+6. **`{作品仮題}` の確定** — ユーザーに作品仮題を確認する。この仮題が以後すべてのファイル名のプレフィックスとして用いられる
+7. Phase 1 の結果を `_workspace/00_concept_analysis.md` に保存する — 新しい会話を開始した場合でもコンセプトを復元できるようにする。保存内容: 作品仮題、専門分野、物語の起点、差別化ポイント、類似作品群、トーン & ムード
+8. ユーザー確認後 → Phase 1.5 へ進行
 
-### Phase 1.5: 자동 리서치 (서브에이전트)
+### Phase 1.5: 自動リサーチ (サブエージェント)
 
-> domain-researcher 서브에이전트를 호출하여 전문 분야 리서치를 자동 수행한다. 사용자 대기 없이 즉시 진행한다.
+> domain-researcher サブエージェントを呼び出して専門分野リサーチを自動実行する。ユーザーの待機なしで即座に進行する。
 
-**서브에이전트: domain-researcher**
+**サブエージェント: domain-researcher**
 - subagent_type: `general-purpose`
-- 리서치 항목:
-  - **R3 업계/직업 구조**: 해당 전문 분야의 조직 구조, 커리어 패스, 권력 계층
-  - **R4 사건 연표**: 해당 분야/시대의 주요 사건, 전환점, 업계 변화
-  - **R5 기존작 분석**: 유사 장르/소재의 기존 웹소설 분석, 차별화 가능점
-  - **R6 갈등 사례**: 해당 분야의 실제 갈등/사건 사례, 빌런 모티프
+- リサーチ項目:
+  - **R3 業界/職業構造**: 当該専門分野の組織構造、キャリアパス、権力階層
+  - **R4 事件年表**: 当該分野/時代の主要事件、転換点、業界変化
+  - **R5 既存作分析**: 類似ジャンル/題材の既存 Web 小説の分析、差別化可能点
+  - **R6 葛藤事例**: 当該分野の実在の葛藤/事件事例、ヴィラン・モチーフ
 
-- 프롬프트:
+- プロンプト:
 ```
-당신은 domain-researcher 서브에이전트입니다.
-다음 리서치를 수행하세요:
+あなたは domain-researcher サブエージェントです。
+以下のリサーチを実行してください:
 
-1. R3 업계/직업 구조:
-   - 전문 분야: {전문 분야}
-   - 분석 항목: 조직 구조, 직급 체계, 커리어 패스, 권력 관계, 핵심 역량
+1. R3 業界/職業構造:
+   - 専門分野: {専門分野}
+   - 分析項目: 組織構造、役職体系、キャリアパス、権力関係、中核能力
 
-2. R4 사건 연표:
-   - 시대: {서사 기점 시대}~현재
-   - 분석 항목: 업계 주요 사건, 사회적 전환점, 기술 변화, 위기와 기회
+2. R4 事件年表:
+   - 時代: {物語起点の時代}~現在
+   - 分析項目: 業界の主要事件、社会的転換点、技術変化、危機と機会
 
-3. R5 기존작 분석:
-   - 장르: {장르}
-   - 분석 항목: 유사 작품 리스트, 성공 요인, 독자 반응, 차별화 빈 공간
+3. R5 既存作分析:
+   - ジャンル: {ジャンル}
+   - 分析項目: 類似作品リスト、成功要因、読者反応、差別化の空白地帯
 
-4. R6 갈등 사례:
-   - 분야: {전문 분야}
-   - 분석 항목: 실제 갈등/비리/사건, 빌런 모티프로 활용 가능한 패턴
+4. R6 葛藤事例:
+   - 分野: {専門分野}
+   - 分析項目: 実在の葛藤/不正/事件、ヴィラン・モチーフとして活用可能なパターン
 
-출력:
-- _workspace/00_research/R3_업계구조.md
-- _workspace/00_research/R4_사건연표.md
-- _workspace/00_research/R5_기존작분석.md
-- _workspace/00_research/R6_갈등사례.md
+出力:
+- _workspace/00_research/R3_業界構造.md
+- _workspace/00_research/R4_事件年表.md
+- _workspace/00_research/R5_既存作分析.md
+- _workspace/00_research/R6_葛藤事例.md
 ```
 
-- 리서치 결과는 `_workspace/00_research/`에 저장
-- 리서치 완료 후 즉시 Phase 2로 진행 (사용자 대기 없음)
+- リサーチ結果は `_workspace/00_research/` に保存する
+- リサーチ完了後ただちに Phase 2 へ進行する (ユーザー待機なし)
 
-### Phase 2: 팀 구성
+### Phase 2: チーム構成
 
-리더는 TeamCreate 전에 `_workspace/00_research/` 내 리서치 결과 파일의 존재 여부를 Glob으로 확인한다.
+リーダーは TeamCreate 前に `_workspace/00_research/` 内のリサーチ結果ファイルの存在有無を Glob で確認する。
 
 ```
 TeamCreate(
@@ -139,277 +139,277 @@ TeamCreate(
     {
       name: "concept-builder",
       agent_type: "general-purpose",
-      prompt: "당신은 concept-builder 에이전트입니다.
-        ${CLAUDE_PLUGIN_ROOT}/agents/concept-builder.md를 읽고 역할을 숙지하세요.
-        ${CLAUDE_PLUGIN_ROOT}/skills/bootstrap/SKILL.md를 읽고 작업 절차와 출력 템플릿을 따르세요.
-        ${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md를 읽고 장르 DNA 프레임워크를 숙지하세요.
-        프로젝트 루트의 참고 문서도 읽으세요 (존재 시).
+      prompt: "あなたは concept-builder エージェントです。
+        ${CLAUDE_PLUGIN_ROOT}/agents/concept-builder.md を読んで役割を把握してください。
+        ${CLAUDE_PLUGIN_ROOT}/skills/bootstrap/SKILL.md を読んで作業手順と出力テンプレートに従ってください。
+        ${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md を読んでジャンル DNA フレームワークを把握してください。
+        プロジェクトルートの参考文書も読んでください (存在時)。
 
-        ★ 자동 리서치 결과 (존재하는 파일만 Read):
-        - _workspace/00_research/R3_업계구조.md → 반영: 세계관 > 업계 조직도, 주인공 배경 > 커리어 패스
-        - _workspace/00_research/R4_사건연표.md → 반영: 핵심 역량 모듈(미래 지식 연표) 구체화
-        - _workspace/00_research/R5_기존작분석.md → 반영: 기존 작품 대비 포지셔닝, 셀링포인트 차별화
-        - _workspace/00_research/R6_갈등사례.md → 반영: 세계관 > 사회적 맥락, 핵심 역량 모듈 > 서사적 기능
-        (파일이 없으면 genre-dna 기반으로 진행하되, 보고서에 '리서치 자료 미반영: [카테고리명]' 명시)
+        ★ 自動リサーチ結果 (存在するファイルのみ Read):
+        - _workspace/00_research/R3_業界構造.md → 反映先: 世界観 > 業界組織図、主人公の背景 > キャリアパス
+        - _workspace/00_research/R4_事件年表.md → 反映先: 中核能力モジュール (未来知識年表) の具体化
+        - _workspace/00_research/R5_既存作分析.md → 反映先: 既存作品比でのポジショニング、セリングポイント差別化
+        - _workspace/00_research/R6_葛藤事例.md → 反映先: 世界観 > 社会的文脈、中核能力モジュール > 物語的機能
+        (ファイルがなければ genre-dna ベースで進行するが、レポートに『リサーチ資料未反映: [カテゴリ名]』を明記する)
 
-        사용자의 소설 컨셉: {사용자 입력 요약}
-        부트스트랩 문서를 작성하여 _workspace/01_concept-builder_bootstrap.md에 저장하세요.
-        작성 완료 후 다음 정보를 SendMessage하세요:
-        - character-architect에게: (1)주인공 핵심 설정 (2)전문 분야 특성 (3)서사 기점 (4)세계관의 사회 구조
-        - plot-hook-engineer에게: (1)핵심 역량 모듈 요약 (2)유료 전환 전략 (3)50화 단위 아크 골격 (4)스케일 확대 로드맵"
+        ユーザーの小説コンセプト: {ユーザー入力の要約}
+        ブートストラップ文書を作成し、_workspace/01_concept-builder_bootstrap.md に保存してください。
+        作成完了後、以下の情報を SendMessage してください:
+        - character-architect へ: (1) 主人公の中核設定 (2) 専門分野の特性 (3) 物語の起点 (4) 世界観の社会構造
+        - plot-hook-engineer へ: (1) 中核能力モジュールの要約 (2) 読者保持転換戦略 (プラットフォーム依存 — 課金モデルなら課金転換、無料公開モデルなら離脱防止転換／書籍化アピール区間) (3) 50 話単位アークの骨格 (4) スケール拡大ロードマップ"
     },
     {
       name: "character-architect",
       agent_type: "general-purpose",
-      prompt: "당신은 character-architect 에이전트입니다.
-        ${CLAUDE_PLUGIN_ROOT}/agents/character-architect.md를 읽고 역할을 숙지하세요.
-        ${CLAUDE_PLUGIN_ROOT}/skills/character/SKILL.md를 읽고 작업 절차와 출력 템플릿을 따르세요.
-        ${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md를 읽고 장르 DNA 프레임워크를 숙지하세요.
+      prompt: "あなたは character-architect エージェントです。
+        ${CLAUDE_PLUGIN_ROOT}/agents/character-architect.md を読んで役割を把握してください。
+        ${CLAUDE_PLUGIN_ROOT}/skills/character/SKILL.md を読んで作業手順と出力テンプレートに従ってください。
+        ${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md を読んでジャンル DNA フレームワークを把握してください。
 
-        ★ 자동 리서치 결과 (존재하는 파일만 Read):
-        - _workspace/00_research/R3_업계구조.md → 반영: 빌런 > 직급/소속/권한, 조력자 > 업계 내 위치
-        - _workspace/00_research/R6_갈등사례.md → 반영: 빌런 > 동기와 행동 패턴, 갈등 유형의 현실적 근거
-        (파일이 없으면 genre-dna 캐릭터 프레임워크 기반으로 진행하되, 보고서에 미반영 카테고리 명시)
+        ★ 自動リサーチ結果 (存在するファイルのみ Read):
+        - _workspace/00_research/R3_業界構造.md → 反映先: ヴィラン > 役職/所属/権限、協力者 > 業界内での位置
+        - _workspace/00_research/R6_葛藤事例.md → 反映先: ヴィラン > 動機と行動パターン、葛藤類型の現実的根拠
+        (ファイルがなければ genre-dna キャラクターフレームワークベースで進行するが、レポートに未反映カテゴリを明記する)
 
-        concept-builder로부터 SendMessage를 수신하면,
-        _workspace/01_concept-builder_bootstrap.md를 Read하여 전체 부트스트랩을 숙지한 뒤
-        큰 설계 캐릭터 시트를 작성하세요.
-        출력: _workspace/02_character-architect_sheet.md
-        작성 완료 후 plot-hook-engineer에게 다음을 SendMessage하세요:
-        (1)주인공 핵심 동기 (2)적대자 계층 전체 (3)VIP 조력자 리스트와 등장 시점 (4)로맨스 라인 설정"
+        concept-builder から SendMessage を受信したら、
+        _workspace/01_concept-builder_bootstrap.md を Read して全体ブートストラップを把握した上で
+        大設計のキャラクターシートを作成してください。
+        出力: _workspace/02_character-architect_sheet.md
+        作成完了後、plot-hook-engineer に以下を SendMessage してください:
+        (1) 主人公の中核動機 (2) 敵対者階層の全体像 (3) VIP 協力者リストと登場時点 (4) ロマンスライン設定"
     },
     {
       name: "plot-hook-engineer",
       agent_type: "general-purpose",
-      prompt: "당신은 plot-hook-engineer 에이전트입니다.
-        ${CLAUDE_PLUGIN_ROOT}/agents/plot-hook-engineer.md를 읽고 역할을 숙지하세요.
-        ${CLAUDE_PLUGIN_ROOT}/skills/plot-hook/SKILL.md를 읽고 작업 절차와 출력 템플릿을 따르세요.
-        ${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md를 읽고 장르 DNA 프레임워크를 숙지하세요.
+      prompt: "あなたは plot-hook-engineer エージェントです。
+        ${CLAUDE_PLUGIN_ROOT}/agents/plot-hook-engineer.md を読んで役割を把握してください。
+        ${CLAUDE_PLUGIN_ROOT}/skills/plot-hook/SKILL.md を読んで作業手順と出力テンプレートに従ってください。
+        ${CLAUDE_PLUGIN_ROOT}/skills/design/references/genre-dna-framework.md を読んでジャンル DNA フレームワークを把握してください。
 
-        ★ 자동 리서치 결과 (존재하는 파일만 Read):
-        - _workspace/00_research/R4_사건연표.md → 반영: 핵심 역량 모듈 활용 타임라인 > 실제 사건 매핑
-        - _workspace/00_research/R6_갈등사례.md → 반영: 아크별 갈등 구조, 빌런 대결의 현실적 패턴
-        (파일이 없으면 genre-dna 서사 공식 기반으로 진행하되, 보고서에 미반영 카테고리 명시)
+        ★ 自動リサーチ結果 (存在するファイルのみ Read):
+        - _workspace/00_research/R4_事件年表.md → 反映先: 中核能力モジュール活用タイムライン > 実在事件のマッピング
+        - _workspace/00_research/R6_葛藤事例.md → 反映先: アーク別の葛藤構造、ヴィラン対決の現実的パターン
+        (ファイルがなければ genre-dna 物語公式ベースで進行するが、レポートに未反映カテゴリを明記する)
 
-        concept-builder와 character-architect 양쪽에서 SendMessage를 모두 수신하면,
-        _workspace/01_concept-builder_bootstrap.md와 _workspace/02_character-architect_sheet.md를
-        Read하여 전체 내용을 숙지한 뒤 큰 설계 플롯/훅 가이드를 작성하세요.
-        출력: _workspace/03_plot-hook-engineer_guide.md"
+        concept-builder と character-architect の双方から SendMessage を受信したら、
+        _workspace/01_concept-builder_bootstrap.md と _workspace/02_character-architect_sheet.md を
+        Read して全内容を把握した上で大設計のプロット/フックガイドを作成してください。
+        出力: _workspace/03_plot-hook-engineer_guide.md"
     }
   ]
 )
 ```
 
-작업 등록:
+タスク登録:
 ```
 TaskCreate(tasks: [
-  { title: "부트스트랩 문서 작성", assignee: "concept-builder" },
-  { title: "캐릭터 시트 작성 (큰 설계)", assignee: "character-architect",
-    depends_on: ["부트스트랩 문서 작성"] },
-  { title: "플롯/훅 가이드 작성 (큰 설계)", assignee: "plot-hook-engineer",
-    depends_on: ["부트스트랩 문서 작성", "캐릭터 시트 작성 (큰 설계)"] }
+  { title: "ブートストラップ文書の作成", assignee: "concept-builder" },
+  { title: "キャラクターシート作成 (大設計)", assignee: "character-architect",
+    depends_on: ["ブートストラップ文書の作成"] },
+  { title: "プロット/フックガイド作成 (大設計)", assignee: "plot-hook-engineer",
+    depends_on: ["ブートストラップ文書の作成", "キャラクターシート作成 (大設計)"] }
 ])
 ```
 
-### Phase 3: 큰 설계 수행
+### Phase 3: 大設計の実行
 
-**실행 방식:** 파이프라인 + 부분 병렬
+**実行方式:** パイプライン + 部分並列
 
-1. concept-builder가 부트스트랩 문서 작성
-2. concept-builder → character-architect, plot-hook-engineer에게 SendMessage (핵심 설정 공유)
-3. character-architect가 캐릭터 시트 작성 (concept-builder의 설정 기반)
-4. character-architect → plot-hook-engineer에게 SendMessage (적대자 계층, VIP 리스트)
-5. plot-hook-engineer가 플롯/훅 가이드 작성 (부트스트랩 + 캐릭터 시트 기반)
+1. concept-builder がブートストラップ文書を作成する
+2. concept-builder → character-architect、plot-hook-engineer に SendMessage (中核設定の共有)
+3. character-architect がキャラクターシートを作成する (concept-builder の設定をベースに)
+4. character-architect → plot-hook-engineer に SendMessage (敵対者階層、VIP リスト)
+5. plot-hook-engineer がプロット/フックガイドを作成する (ブートストラップ + キャラクターシートをベースに)
 
-**팀원 간 통신 규칙:**
-- concept-builder는 부트스트랩 완성 시 양쪽 팀원에게 핵심 설정 SendMessage
-- character-architect는 캐릭터 시트 완성 시 plot-hook-engineer에게 SendMessage
-- 설정 모순 발견 시 해당 팀원에게 직접 SendMessage로 조정 요청
-- 각 팀원은 파일 저장 완료 시 리더에게 알림
+**チームメンバー間の通信ルール:**
+- concept-builder はブートストラップ完成時に双方のメンバーへ中核設定を SendMessage する
+- character-architect はキャラクターシート完成時に plot-hook-engineer へ SendMessage する
+- 設定矛盾を発見した場合、該当メンバーへ直接 SendMessage で調整を依頼する
+- 各メンバーはファイル保存完了時にリーダーへ通知する
 
-**산출물 저장:**
+**成果物の保存:**
 
-| 팀원 | 출력 경로 |
+| チームメンバー | 出力パス |
 |------|----------|
 | concept-builder | `_workspace/01_concept-builder_bootstrap.md` |
 | character-architect | `_workspace/02_character-architect_sheet.md` |
 | plot-hook-engineer | `_workspace/03_plot-hook-engineer_guide.md` |
 
-**리더 모니터링:**
-- TaskGet으로 전체 진행률 확인
-- 팀원 유휴 시 자동 알림 수신
-- 특정 팀원이 막히면 SendMessage로 개입
+**リーダーモニタリング:**
+- TaskGet で全体の進捗率を確認する
+- メンバー遊休時の自動通知を受信する
+- 特定メンバーが詰まった場合、SendMessage で介入する
 
-### Phase 4: 통합 검증 및 정리
+### Phase 4: 統合検証と整理
 
-1. 모든 팀원 작업 완료 대기 (TaskGet으로 상태 확인)
-2. 각 팀원의 산출물을 Read로 수집
-3. **일관성 검증 체크리스트** (부트스트랩 문서가 source of truth):
-   - [ ] 주인공 직업/나이/서사 기점이 부트스트랩↔캐릭터 시트에서 일치하는가
-   - [ ] 주인공의 과거/배경 설정이 부트스트랩↔캐릭터 시트에서 일치하는가
-   - [ ] 핵심 역량 모듈(부트스트랩)의 항목이 플롯 가이드의 활용 타임라인에 반영되었는가
-   - [ ] 캐릭터 시트의 적대자 이름/아크가 플롯 가이드의 아크별 적대자와 일치하는가
-   - [ ] VIP 조력자의 등장 시점(캐릭터 시트)이 플롯 가이드의 타임라인과 맞는가
-   - [ ] 로맨스 라인 첫 만남 시점이 캐릭터 시트↔플롯 가이드에서 일치하는가
-   - [ ] 유료 전환 전략(부트스트랩)이 플롯 가이드의 25화/50화 배치와 정합하는가
-   - [ ] 리서치 자료의 핵심 정보가 부트스트랩 핵심 역량 모듈에 반영되었는가
-   - [ ] 적대자의 직급/행동이 업계 구조 리서치와 정합하는가
-   - [ ] 실제 갈등 사례에서 영감을 받은 아크가 최소 1개 이상인가
-   - 모순 발견 시: 부트스트랩 기준으로 다른 문서를 수정하고, 수정 내역을 결과 보고에 포함
+1. 全メンバーの作業完了を待機する (TaskGet で状態確認)
+2. 各メンバーの成果物を Read で収集する
+3. **整合性検証チェックリスト** (ブートストラップ文書が source of truth):
+   - [ ] 主人公の職業/年齢/物語起点がブートストラップ↔キャラクターシートで一致しているか
+   - [ ] 主人公の過去/背景設定がブートストラップ↔キャラクターシートで一致しているか
+   - [ ] 中核能力モジュール (ブートストラップ) の項目がプロットガイドの活用タイムラインに反映されているか
+   - [ ] キャラクターシートの敵対者名/アークがプロットガイドのアーク別敵対者と一致しているか
+   - [ ] VIP 協力者の登場時点 (キャラクターシート) がプロットガイドのタイムラインと整合しているか
+   - [ ] ロマンスラインの初対面時点がキャラクターシート↔プロットガイドで一致しているか
+   - [ ] 読者保持転換戦略 (ブートストラップ — プラットフォーム依存で課金転換または離脱防止転換／書籍化アピール区間) がプロットガイドの 25 話/50 話配置と整合しているか
+   - [ ] リサーチ資料の中核情報がブートストラップの中核能力モジュールに反映されているか
+   - [ ] 敵対者の役職/行動が業界構造リサーチと整合しているか
+   - [ ] 実在の葛藤事例から着想を得たアークが最低 1 個以上あるか
+   - 矛盾を発見した場合: ブートストラップを基準に他文書を修正し、修正内容を結果報告に含める
 
-4. 최종 산출물을 `{DESIGN_DIR}`에 복사 (novel-config.md의 경로와 일치시킴):
+4. 最終成果物を `{DESIGN_DIR}` にコピーする (novel-config.md のパスと一致させる):
 
-| 중간 산출물 | 최종 경로 |
+| 中間成果物 | 最終パス |
 |-----------|----------|
-| `_workspace/01_*_bootstrap.md` | `{DESIGN_DIR}/{작품가제}_부트스트랩.md` |
-| `_workspace/02_*_sheet.md` | `{DESIGN_DIR}/{작품가제}_캐릭터시트.md` |
-| `_workspace/03_*_guide.md` | `{DESIGN_DIR}/{작품가제}_플롯훅가이드.md` |
+| `_workspace/01_*_bootstrap.md` | `{DESIGN_DIR}/{作品仮題}_ブートストラップ.md` |
+| `_workspace/02_*_sheet.md` | `{DESIGN_DIR}/{作品仮題}_キャラクターシート.md` |
+| `_workspace/03_*_guide.md` | `{DESIGN_DIR}/{作品仮題}_プロットフックガイド.md` |
 
-   > **경로 일관성 원칙**: novel-config.md의 설정문서 매핑 경로와 실제 파일 위치가 반드시 일치해야 한다.
-   > Phase 5에서 config에 `design/{작품가제}_*.md`로 기록하므로, 여기서도 `design/` 하위에 저장한다.
-   > `{DESIGN_DIR}` 디렉토리가 없으면 생성한다 (기본값: `design/`).
+   > **パス整合性原則**: novel-config.md の設定文書マッピングパスと実際のファイル位置は必ず一致させなければならない。
+   > Phase 5 で config に `design/{作品仮題}_*.md` として記録するため、ここでも `design/` 配下に保存する。
+   > `{DESIGN_DIR}` ディレクトリがなければ生成する (デフォルト値: `design/`)。
 
-5. 팀원들에게 종료 요청 (SendMessage)
-6. **TeamDelete("design-big-team")** — 팀 해산
-   > 이후 design-small 실행 시 팀 충돌 방지. 반드시 실행한다.
-7. `_workspace/` 디렉토리 보존 (사후 검증용)
-8. 사용자에게 결과 요약 보고
+5. メンバーへ終了要請 (SendMessage)
+6. **TeamDelete("design-big-team")** — チーム解散
+   > 以後 design-small 実行時のチーム衝突を防止する。必ず実行する。
+7. `_workspace/` ディレクトリは保持する (事後検証用)
+8. ユーザーへ結果サマリーを報告する
 
-### Phase 5: novel-config.md 초안 자동 생성
+### Phase 5: novel-config.md ドラフトの自動生成
 
-큰 설계 완료 후, 창작/윤문/재작성 스킬이 사용할 `novel-config.md` 초안을 자동 생성한다.
-사용자가 수동으로 작성할 필요 없이, 설계 산출물의 경로와 구조를 분석하여 초안을 만든다.
+大設計完了後、創作/推敲/再執筆スキルが利用する `novel-config.md` のドラフトを自動生成する。
+ユーザーが手動で作成する必要はなく、設計成果物のパスと構造を分析してドラフトを作成する。
 
-1. 플롯훅가이드에서 아크 구조(1막/2막/3막)를 추출하여 EP 범위 테이블을 자동 구성한다
-2. 부트스트랩에서 보존 가드레일 후보를 추출한다 (세계관 규칙, 핵심 설정)
-3. 캐릭터시트에서 대화 DNA 섹션 존재 여부를 확인한다
-4. `${CLAUDE_PLUGIN_ROOT}/skills/polish/references/project-config-template.md`를 참조하여 형식을 맞춘다
-5. **target_platform 검증 게이트**:
-   - Phase 1에서 확정된 플랫폼이 한국 플랫폼 canonical name 6개 중 하나인지 재검증한다
-   - 비지원 값이면 `novel-config.md`를 생성하지 않고 사용자 수정을 요청한다
+1. プロットフックガイドからアーク構造 (1 幕/2 幕/3 幕) を抽出して EP 範囲テーブルを自動構成する
+2. ブートストラップから保存ガードレール候補を抽出する (世界観ルール、中核設定)
+3. キャラクターシートで対話 DNA セクションの存在有無を確認する
+4. `${CLAUDE_PLUGIN_ROOT}/skills/polish/references/project-config-template.md` を参照して形式を合わせる
+5. **target_platform 検証ゲート**:
+   - Phase 1 で確定したプラットフォームが投稿プラットフォーム canonical name 6 個のいずれかに該当するか再検証する
+   - 非対応値であれば `novel-config.md` を生成せずユーザー修正を依頼する
 
-생성 경로: `{프로젝트 루트}/novel-config.md`
+生成パス: `{プロジェクトルート}/novel-config.md`
 
 ```markdown
-# novel-config.md (자동 생성 초안 — 검토 후 수정 가능)
+# novel-config.md (自動生成ドラフト — レビュー後に修正可)
 
-## 프로젝트 기본 정보
+## プロジェクト基本情報
 project:
-  name: "{작품가제}"
-  target_platform: "{Phase 1에서 확인된 플랫폼}"
-  target_genre: "{Phase 1에서 확인된 장르}"
+  name: "{作品仮題}"
+  target_platform: "{Phase 1 で確認したプラットフォーム}"
+  target_genre: "{Phase 1 で確認したジャンル}"
   episode_dir: "episode/"
   work_dir: "revision/"
   design_dir: "design/"
 
-## 설정문서 매핑
-### 공통 문서
-| 문서 키 | 경로 | 용도 |
+## 設定文書マッピング
+### 共通文書
+| 文書キー | パス | 用途 |
 |---------|------|------|
-| character_core | {DESIGN_DIR}/{작품가제}_캐릭터시트.md | 캐릭터 핵심 정의 |
-| character_detail | {DESIGN_DIR}/{작품가제}_캐릭터시트.md | 보이스표, 비언어 태그 |
-| dialogue_dna | {DESIGN_DIR}/{작품가제}_캐릭터시트.md#dialogue-dna | Dialogue DNA (대사 고유성) — 캐릭터시트 내 섹션 |
-| bootstrap | {DESIGN_DIR}/{작품가제}_부트스트랩.md | 세계관, 매크로 수치 |
-| writing_rules | CLAUDE.md | 집필 규칙 |
+| character_core | {DESIGN_DIR}/{作品仮題}_キャラクターシート.md | キャラクター中核定義 |
+| character_detail | {DESIGN_DIR}/{作品仮題}_キャラクターシート.md | ボイステーブル、非言語タグ |
+| dialogue_dna | {DESIGN_DIR}/{作品仮題}_キャラクターシート.md#dialogue-dna | Dialogue DNA (台詞固有性) — キャラクターシート内のセクション |
+| bootstrap | {DESIGN_DIR}/{作品仮題}_ブートストラップ.md | 世界観、マクロ数値 |
+| writing_rules | CLAUDE.md | 執筆ルール |
 
-### EP 범위별 설정문서
-| EP 범위 | 레이블 | 플롯 가이드 경로 | 세부 플롯 가이드 (선택) | 세부 캐릭터 시트 (선택) |
+### EP 範囲別の設定文書
+| EP 範囲 | レーベル | プロットガイドのパス | 詳細プロットガイド (任意) | 詳細キャラクターシート (任意) |
 |---------|--------|----------------|----------------------|----------------------|
-| {아크1 범위} | {아크1 레이블} | {DESIGN_DIR}/{작품가제}_플롯훅가이드.md | | |
-| {아크2 범위} | {아크2 레이블} | {DESIGN_DIR}/{작품가제}_플롯훅가이드.md | | |
-| {아크3 범위} | {아크3 레이블} | {DESIGN_DIR}/{작품가제}_플롯훅가이드.md | | |
+| {アーク 1 範囲} | {アーク 1 レーベル} | {DESIGN_DIR}/{作品仮題}_プロットフックガイド.md | | |
+| {アーク 2 範囲} | {アーク 2 レーベル} | {DESIGN_DIR}/{作品仮題}_プロットフックガイド.md | | |
+| {アーク 3 範囲} | {アーク 3 レーベル} | {DESIGN_DIR}/{作品仮題}_プロットフックガイド.md | | |
 
-## 보존 가드레일
-{부트스트랩에서 추출한 핵심 보존 항목}
+## 保存ガードレール
+{ブートストラップから抽出した中核保存項目}
 
-## 수치 교차검증 정본 우선순위
-1. plot_by_ep — EP별 확정 수치
-2. bootstrap — 매크로 수치
-3. verification — 검증 완료 수치
-4. 직전 에피소드 — 서사 연속성
+## 数値クロス検証の正本優先順位
+1. plot_by_ep — EP 別の確定数値
+2. bootstrap — マクロ数値
+3. verification — 検証完了済み数値
+4. 直前エピソード — 物語連続性
 ```
 
-5. 사용자에게 초안 검토를 요청한다:
+5. ユーザーにドラフトのレビューを依頼する:
 ```
-novel-config.md 초안을 생성했습니다.
-보존 가드레일과 EP 범위 테이블을 검토하고, 필요시 커스텀 축을 추가해주세요.
-```
-
-### 큰 설계 완료 시 작은 설계 안내
-
-```
-## 큰 설계가 완료되었습니다.
-
-### 생성된 문서
-- design/{작품가제}_부트스트랩.md
-- design/{작품가제}_캐릭터시트.md
-- design/{작품가제}_플롯훅가이드.md
-- novel-config.md (초안 — 검토 후 수정 가능)
-
-### 다음 단계: 작은 설계 (25화 단위 세부 설계)
-
-⚠️ **작은 설계를 건너뛰고 바로 `/create`를 실행하면 EP별 플롯 비트가 없어 에피소드 품질이 크게 저하됩니다.**
-큰 설계의 플롯 훅 가이드는 아크 단위 개요만 포함하므로, episode-architect가 EP별 설계도를 추출하기 어렵습니다.
-
-작은 설계를 진행하시려면 `design-small` 스킬을 사용하세요.
-작은 설계에서도 domain-researcher가 자동으로 해당 아크의 세부 리서치를 수행합니다.
-작은 설계 완료 시 novel-config.md의 EP 범위 테이블에 세부 플롯 가이드 경로가 자동 추가됩니다.
+novel-config.md のドラフトを生成しました。
+保存ガードレールと EP 範囲テーブルをレビューし、必要に応じてカスタム軸を追加してください。
 ```
 
-## 에러 핸들링
+### 大設計完了時の小設計案内
 
-| 상황 | 전략 |
+```
+## 大設計が完了しました。
+
+### 生成された文書
+- design/{作品仮題}_ブートストラップ.md
+- design/{作品仮題}_キャラクターシート.md
+- design/{作品仮題}_プロットフックガイド.md
+- novel-config.md (ドラフト — レビュー後に修正可)
+
+### 次のステップ: 小設計 (25 話単位の詳細設計)
+
+⚠️ **小設計を飛ばしていきなり `/create` を実行すると、EP 別プロットビートがないためエピソード品質が大きく低下します。**
+大設計のプロットフックガイドはアーク単位の概要しか含まないため、episode-architect が EP 別の設計図を抽出することは困難です。
+
+小設計を進める場合は `design-small` スキルを使用してください。
+小設計でも domain-researcher が当該アークの詳細リサーチを自動実行します。
+小設計完了時には novel-config.md の EP 範囲テーブルに詳細プロットガイドのパスが自動追加されます。
+```
+
+## エラーハンドリング
+
+| 状況 | 戦略 |
 |------|------|
-| domain-researcher 실패 | 1회 재시도. 재실패 시 genre-dna 기반으로 팀 구성 진행, 보고서에 "자동 리서치 미반영" 명시 |
-| concept-builder 실패 | 핵심 설정이므로 반드시 재시도. 재실패 시 리더가 직접 부트스트랩 초안 작성 |
-| character-architect 실패 | 1회 재시도. 재실패 시 리더가 genre-dna 기반 기본 캐릭터 시트 생성 |
-| plot-hook-engineer 실패 | 1회 재시도. 재실패 시 부트스트랩+캐릭터 시트만으로 기본 플롯 가이드 생성 |
-| 설정 모순 발견 | 부트스트랩 문서를 기준(source of truth)으로 다른 문서 수정 |
-| 팀원 간 통신 지연 | 리더가 중간에서 파일을 Read하여 수동으로 정보 전달 |
-| 리서치 결과 품질 부족 | genre-dna 프레임워크 기반으로 보강, 보고서에 명시 |
-| 제안서/입력의 플랫폼이 비지원 값 | 자동 매핑하지 않고 한국 플랫폼 6개 중 재선택 요청 |
+| domain-researcher 失敗 | 1 回再試行。再失敗時は genre-dna ベースでチーム構成を進行し、レポートに「自動リサーチ未反映」を明記 |
+| concept-builder 失敗 | 中核設定であるため必ず再試行。再失敗時はリーダーが直接ブートストラップのドラフトを作成 |
+| character-architect 失敗 | 1 回再試行。再失敗時はリーダーが genre-dna ベースの基本キャラクターシートを生成 |
+| plot-hook-engineer 失敗 | 1 回再試行。再失敗時はブートストラップ + キャラクターシートのみで基本プロットガイドを生成 |
+| 設定矛盾の発見 | ブートストラップ文書を基準 (source of truth) に他文書を修正 |
+| メンバー間通信の遅延 | リーダーが間に入ってファイルを Read し、手動で情報を伝達 |
+| リサーチ結果の品質不足 | genre-dna フレームワークベースで補強、レポートに明記 |
+| 提案書/入力のプラットフォームが非対応値 | 自動マッピングせず投稿プラットフォーム 6 個から再選択を依頼 |
 
-## 데이터 흐름
+## データフロー
 
 ```
-[사용자] → 소설 컨셉
+[ユーザー] → 小説コンセプト
     ↓
-Phase 0: 기존 설계 확인 (선택)
+Phase 0: 既存設計の確認 (任意)
     ↓
-Phase 1: 컨셉 분석 → _workspace/00_concept_analysis.md
-    ↓ (제안서 존재 시 자동 로드)
-Phase 1.5: domain-researcher 서브에이전트 → _workspace/00_research/ (R3~R6)
-    ↓ (사용자 대기 없음)
-Phase 2: TeamCreate("design-big-team") — 리서치 결과 포함
+Phase 1: コンセプト分析 → _workspace/00_concept_analysis.md
+    ↓ (提案書存在時に自動ロード)
+Phase 1.5: domain-researcher サブエージェント → _workspace/00_research/ (R3~R6)
+    ↓ (ユーザー待機なし)
+Phase 2: TeamCreate("design-big-team") — リサーチ結果を含む
     ↓
 Phase 3: concept-builder → character-architect → plot-hook-engineer
     ↓
-Phase 4: 통합 검증 → 산출물 3종
+Phase 4: 統合検証 → 成果物 3 種
     ↓
-작은 설계 안내
+小設計案内
 ```
 
-## 테스트 시나리오
+## テストシナリオ
 
-### 정상 흐름
-1. 사용자가 "회귀한 법의학 전문의" 컨셉 제공
-2. Phase 1에서 컨셉 분석, 작품가제 확정 ("법의학전문의")
-3. Phase 1.5에서 domain-researcher가 R3~R6 자동 리서치 수행
-4. Phase 2에서 팀 구성 (리서치 결과 프롬프트에 포함)
-5. Phase 3에서 CB→CA→PHE 순서로 큰 설계 완성
-6. Phase 4에서 일관성 검증 후 산출물 3종 + 작은 설계 안내
+### 正常フロー
+1. ユーザーが「人生やり直しの法医学専門医」コンセプトを提供
+2. Phase 1 でコンセプト分析、作品仮題を確定 (「法医学専門医」)
+3. Phase 1.5 で domain-researcher が R3~R6 の自動リサーチを実行
+4. Phase 2 でチーム構成 (リサーチ結果をプロンプトに含む)
+5. Phase 3 で CB→CA→PHE の順に大設計を完成
+6. Phase 4 で整合性検証後、成果物 3 種 + 小設計案内
 
-### 제안서 연결 흐름
-1. 프로젝트 루트에 `법의학전문의_제안서.md` 존재
-2. Phase 1에서 제안서를 로드하여 컨셉 자동 파악
-3. 사용자 확인 후 Phase 1.5로 즉시 진행
-4. 이후 정상 흐름과 동일
+### 提案書連携フロー
+1. プロジェクトルートに `法医学専門医_提案書.md` が存在
+2. Phase 1 で提案書をロードしてコンセプトを自動把握
+3. ユーザー確認後、Phase 1.5 へ即時進行
+4. 以降は正常フローと同じ
 
-### 에러 흐름
-1. Phase 1.5에서 domain-researcher 실패
-2. 리더가 1회 재시도 → 재실패
-3. genre-dna 프레임워크 기반으로 Phase 2 진행, 보고서에 "자동 리서치 미반영" 명시
-4. Phase 3에서 plot-hook-engineer 에러로 중지
-5. 리더가 유휴 알림 수신 → SendMessage로 상태 확인 → 1회 재시도
-6. 재시도 실패 시 리더가 부트스트랩 + 캐릭터 시트 기반 기본 플롯 가이드 직접 작성
-7. 최종 보고서에 "plot-hook-engineer 자동 생성 — 수동 검토 권장" 명시
+### エラーフロー
+1. Phase 1.5 で domain-researcher が失敗
+2. リーダーが 1 回再試行 → 再失敗
+3. genre-dna フレームワークベースで Phase 2 を進行、レポートに「自動リサーチ未反映」を明記
+4. Phase 3 で plot-hook-engineer がエラーで停止
+5. リーダーが遊休通知を受信 → SendMessage で状態確認 → 1 回再試行
+6. 再試行失敗時はリーダーがブートストラップ + キャラクターシートをベースに基本プロットガイドを直接作成
+7. 最終レポートに「plot-hook-engineer 自動生成 — 手動レビュー推奨」を明記

@@ -1,13 +1,13 @@
 {
   "name": "novel-studio",
   "version": "1.1.0",
-  "description": "AI 웹소설 창작 하네스. 18개 전문 에이전트와 10개 스킬로 기획→설계→집필→윤문→재작성 전 과정을 자동화. Web novel creation harness with end-to-end automation from planning to publishing.",
+  "description": "AI Web小説創作ハーネス。18個の専門エージェントと10個のスキルで企画→設計→執筆→推敲→再執筆の全工程を自動化。Web novel creation harness with end-to-end automation from planning to publishing.",
   "author": {
     "name": "MJbae",
     "url": "https://github.com/MJbae"
   },
-  "homepage": "https://MJbae.github.io/awesome-novel-studio/",
-  "repository": "https://github.com/MJbae/awesome-novel-studio",
+  "homepage": "https://kinoko-tz.github.io/awesome-novel-studio-jp/",
+  "repository": "https://github.com/kinoko-tz/awesome-novel-studio-jp",
   "license": "Apache-2.0",
   "keywords": [
     "web-novel",

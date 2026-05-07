@@ -4,158 +4,158 @@
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple.svg" alt="Claude Code Plugin">
   <img src="https://img.shields.io/badge/Agents-18-orange.svg" alt="18 Agents">
   <img src="https://img.shields.io/badge/Skills-10-green.svg" alt="10 Skills">
-  <a href="https://github.com/MJbae/awesome-novel-studio/stargazers"><img src="https://img.shields.io/github/stars/MJbae/awesome-novel-studio?style=social" alt="GitHub Stars"></a>
+  <a href="https://github.com/kinoko-tz/awesome-novel-studio-jp/stargazers"><img src="https://img.shields.io/github/stars/kinoko-tz/awesome-novel-studio-jp?style=social" alt="GitHub Stars"></a>
 </p>
 
-# Awesome Novel Studio
+# Awesome Novel Studio (日本語版)
 
-**AI Web Novel Creation Harness** — A Claude Code Plugin
+**AI Web小説創作ハーネス** — Claude Code Plugin
 
-**English** | [한국어](README_KO.md)
+Claude Code 上で動く Web 小説制作システム。18 体の専門エージェントと 10 個のスキルを組み合わせ、**企画 → 設計 → 執筆 → 推敲 → 再執筆**の全工程を自動化する。
 
-An end-to-end web novel production system built on Claude Code. Combines 18 specialist agents and 10 skills to automate the full pipeline: **propose → design → create → polish → rewrite**.
+> **本番運用での実証済み** — このワークフローで執筆された Web 小説（韓国市場）が出版社と正式契約を締結。
+> 1 日閲覧数 2,500+ / いいね 1,000+ / 購読 300+
 
-> **Production-Proven** — A web novel written with this workflow secured a publishing deal.
-> Daily views 2,500+ / Likes 1,000+ / Subscribers 300+
+> **本リポジトリは [MJbae/awesome-novel-studio](https://github.com/MJbae/awesome-novel-studio) の日本語ローカライズ版**。原典は韓国市場の Web 小説を前提としており、用語・事例・プラットフォームを日本市場（カクヨム・小説家になろう等）向けに調整している。
 
 ---
 
-## Installation
+## インストール
 
-### Via Marketplace
+### マーケットプレイス経由
 
-#### Add the marketplace
+#### マーケットプレイスを追加
 ```shell
-/plugin marketplace add MJbae/awesome-novel-studio
+/plugin marketplace add kinoko-tz/awesome-novel-studio-jp
 ```
 
-#### Install the plugin
+#### プラグインをインストール
 ```shell
 /plugin install novel-studio@awesome-ai-studio
 ```
 
-#### Restart session to activate
+#### セッション再起動で有効化
 ```shell
 /exit
 ```
 
 ---
 
-## Quick Start
+## クイックスタート
 
 ```bash
-# 1. Generate 3 novel proposals, pick one
+# 1. 小説の企画案を 3 案生成して 1 案を選ぶ
 /propose
 
-# 2. Big design (bootstrap + character sheet + plot-hook guide)
+# 2. 大設計（ブートストラップ + キャラクターシート + プロットフックガイド）
 /design-big
 
-# 3. Small design (25-episode detailed design)
+# 3. 小設計（25 話単位の詳細設計）
 /design-small
 
-# 4. Write episodes
+# 4. 各話の執筆
 /create
 
-# 5. Polish
+# 5. 推敲
 /polish
 ```
 
-## Pipeline
+## パイプライン
 
 ```
-Propose ────── Design ─────────────── Create ──── Polish ──── Publish
-/propose        /design-big                /create   /polish
-                /design-small
-                     ↕ On design changes
-                  /rewrite → /polish
+企画 ────── 設計 ─────────────── 執筆 ──── 推敲 ──── 公開
+/propose       /design-big              /create   /polish
+               /design-small
+                    ↕ 設計変更時
+                 /rewrite → /polish
 ```
 
 ---
 
-## The Three Walls of Long-Form AI Fiction
+## 長編 AI 小説の三つの壁
 
-Writing a single 5,000-character episode with AI is easy. Scaling that to 300 episodes and 1.5 million characters is where things break.
+5,000 字 1 話を AI で書くのは難しくない。問題は、それを 300 話・150 万字に伸ばしたときに起こる。
 
-| The Wall | Symptom | Awesome Novel Studio's Solution |
-|----------|---------|------------------------|
-| **Character depth collapse** | Distinct personalities, speech patterns, and motivations blur into sameness as episodes accumulate. | **Character sheet + voice table** — Define each character's tone, sentence endings, and non-verbal palette at design time. Automatically verified every episode via the `VOICE`, `TITLE`, and `ALIVE` polish axes. |
-| **Story coherence breakdown** | Cause-and-effect chains and foreshadowing unravel across a sprawling world. | **Plot-hook guide + continuity-bridge** — Decompose the full narrative arc into 25-episode beat structures. Before each episode, `continuity-bridge` collects timeline, foreshadowing, and character state from the previous 2 episodes and feeds it to the creation agent. |
-| **Number and setting inconsistency** | Currency values, historical dates, character ages — the hard facts that anchor the story start contradicting each other. | **guard_rails + LOGIC axis** — Define absolute rules in `novel-config.md`. The `LOGIC` polish axis cross-checks numbers and timeline against the previous 2 episodes. |
+| 壁 | 症状 | Awesome Novel Studio の解法 |
+|----|------|--------------------------------|
+| **キャラクターの立体性崩壊** | 多数の登場人物が持つ固有の性格・話法・内的動機が、回を重ねるごとに薄れて画一化する。 | **キャラクターシート + ボイステーブル** — キャラクターごとの口調・語尾・非言語パレットを設計段階で定義し、執筆・推敲時に `VOICE`・`TITLE`・`ALIVE` 軸で毎話自動検証する。 |
+| **ストーリー整合性の破綻** | 広大な世界観の中で積み上げた事件の因果関係や伏線が崩れる。 | **プロットフックガイド + continuity-bridge** — 全体の物語アークを 25 話単位でビート分解し、各話執筆前に `continuity-bridge` が直前 2 話のタイムライン・伏線・キャラクター状態を収集して執筆エージェントに渡す。 |
+| **数値・設定の不整合** | 通貨価値、歴史年代、キャラクターの年齢など、作品の骨格を支える数値が辻褄合わなくなる。 | **guard_rails + LOGIC 軸** — `novel-config.md` に絶対ルールを定義し、推敲の `LOGIC` 軸が直前 2 話と数値・タイムラインを相互検証する。 |
 
 ---
 
-## Commands
+## コマンド
 
-| Command | Description | Notes |
-|---------|-------------|-------|
-| `/propose` | Generate 3 proposals from genre + Korean platform + concept | Starting point for a new novel |
-| `/design-big` | Full novel design (bootstrap, characters, plot) | Includes auto-research |
-| `/design-small` | 25-episode detailed design | Requires big design first |
-| `/design` | Design router (big + small combined) | Use when scope is unclear |
-| `/bootstrap` | Generate bootstrap document only | World-building and concept only |
-| `/character` | Generate character sheet only | Character design only |
-| `/plot-hook` | Generate plot-hook guide only | Narrative structure only |
-| `/create` | Write episodes sequentially | Based on design documents |
-| `/polish` (= `/lint`) | 16-axis polish (6 agents in parallel) | Auto-sequential progression |
-| `/rewrite` (= `/revise`) | Rewrite episodes after design changes | Auto-calculates impact scope |
+| コマンド | 説明 | 備考 |
+|---------|------|------|
+| `/propose` | ジャンル + 投稿プラットフォーム + コンセプトから 3 案生成 | 新規作品の起点 |
+| `/design-big` | 作品全体の設計（ブートストラップ・キャラクター・プロット） | 自動リサーチ含む |
+| `/design-small` | 25 話単位の詳細設計 | 大設計が前提 |
+| `/design` | 設計ルーター（大設計 + 小設計を統合） | 範囲が不明確なときに使う |
+| `/bootstrap` | ブートストラップ文書のみ生成 | 世界観・コンセプトだけ欲しいとき |
+| `/character` | キャラクターシートのみ生成 | キャラ設計だけ欲しいとき |
+| `/plot-hook` | プロットフックガイドのみ生成 | 物語構造だけ欲しいとき |
+| `/create` | 各話の順次執筆 | 設計文書ベース |
+| `/polish` (= `/lint`) | 16 軸推敲（6 エージェント並列） | 自動連続進行 |
+| `/rewrite` (= `/revise`) | 設計変更後の各話再執筆 | 影響範囲を自動算出 |
 
-### Scope Targeting
+### 範囲指定
 
-All create/polish/rewrite commands accept episode range arguments:
+`create` / `polish` / `rewrite` 系コマンドはエピソード範囲指定を受け付ける。
 
 ```bash
-/create EP051          # Start from EP051
-/create EP001-EP010    # EP001 through EP010
-/polish start          # From EP001
-/rewrite project-name EP001-EP010
+/create EP051          # EP051 から開始
+/create EP001-EP010    # EP001 ～ EP010
+/polish start          # EP001 から
+/rewrite プロジェクト名 EP001-EP010
 ```
 
-## Workflow
+## ワークフロー
 
 ```
-/propose                Generate 3 proposals, select 1
+/propose                企画案 3 案生成、1 案選択
        ↓
-/design-big             Bootstrap + character sheet + plot-hook guide
-       ↓                → novel-config.md auto-generated
-/design-small           25-episode detailed design (optional, recommended)
+/design-big             ブートストラップ + キャラクターシート + プロットフックガイド
+       ↓                → novel-config.md 自動生成
+/design-small           25 話単位の詳細設計（任意・推奨）
        ↓
-/create                 Episode creation (auto-sequential)
+/create                 各話の執筆（自動連続）
        ↓
-/polish                 16-axis polish (auto-sequential)
+/polish                 16 軸推敲（自動連続）
        ↓
-[On design changes] /rewrite → /polish   Rewrite then re-polish
+[設計変更時] /rewrite → /polish   再執筆 → 再推敲
 ```
 
-## Directory Structure
+## ディレクトリ構造
 
-Running the pipeline generates this project structure:
+パイプラインを動かすと以下の構造が生成される。
 
 ```
-{project-name}/
-├── novel-config.md              # Project config (central file)
-├── design/                      # Design documents
-│   ├── {name}_bootstrap.md      # World-building, concept, platform strategy
-│   ├── {name}_character.md      # Character profiles, relationships, dialogue DNA
-│   └── {name}_plot-hook.md      # 3-act structure, 25-ep beats, hook strategy
-├── episode/                     # Episode manuscripts
+{プロジェクト名}/
+├── novel-config.md              # プロジェクト設定（中央ファイル）
+├── design/                      # 設計文書
+│   ├── {名前}_bootstrap.md      # 世界観・コンセプト・プラットフォーム戦略
+│   ├── {名前}_character.md      # キャラクタープロフィール・関係図・対話 DNA
+│   └── {名前}_plot-hook.md      # 三幕構成・25 話ビート・フック戦略
+├── episode/                     # 各話本文
 │   ├── ep001.md
 │   └── ...
-├── revision/                    # Working files
-│   ├── fix_plan.md              # Polish progress tracker
-│   └── learnings.md             # Patterns discovered during polish
-└── _workspace/                  # Temporary workspace
-    └── 00_research/             # Auto-research results
+├── revision/                    # 作業ファイル
+│   ├── fix_plan.md              # 推敲進捗トラッカー
+│   └── learnings.md             # 推敲中に発見されたパターン
+└── _workspace/                  # 一時作業領域
+    └── 00_research/             # 自動リサーチ結果
 ```
 
 ## novel-config.md
 
-The central configuration file for the entire pipeline. Auto-generated by `/design-big`, then reviewed and edited by the user.
+パイプライン全体の中央設定ファイル。`/design-big` で自動生成され、ユーザがレビュー・編集する。
 
 ```yaml
 project:
-  name: "My Novel"
-  target_platform: "문피아"
-  target_genre: "regression+specialist"
+  name: "私の小説"
+  target_platform: "カクヨム"
+  target_genre: "現代ダンジョン+お仕事小説"
   episode_dir: "episode/"
   work_dir: "revision/"
   design_dir: "design/"
@@ -167,61 +167,63 @@ design_documents:
 
 ep_range_table:
   - range: "EP001-EP025"
-    label: "Act 1: Origin"
+    label: "第 1 幕：起源"
     plot_guide: "design/my-novel_plot-hook.md"
 
 guard_rails:
-  - "The protagonist's regression ability only allows recalling past information"
+  - "主人公のタイムリープ能力は過去の情報の想起のみ可能"
 
 custom_axes:
-  EXPERTISE: "Domain knowledge should be hinted at through dialogue, never explained"
+  EXPERTISE: "専門知識は対話の中で匂わせるのみ。説明はしない"
 ```
 
-- **ep_range_table**: Episode ranges auto-extracted from the plot guide
-- **guard_rails**: Absolute rules enforced at every creation and polish step
-- **custom_axes**: Project-specific additional polish criteria
+- **ep_range_table**: プロットガイドから自動抽出されたエピソード範囲
+- **guard_rails**: 全執筆・推敲段階で強制される絶対ルール
+- **custom_axes**: プロジェクト固有の追加推敲基準
 
-## 16-Axis Polish System
+## 16 軸推敲システム
 
-| Axis | Name | Description |
-|------|------|-------------|
-| 1 | BANNED | Banned expressions (time-skip cliches, meta-commentary) |
-| 2 | VOICE | Character dialogue consistency (checked against voice table) |
-| 3 | TITLE | Forms of address (speaker, listener, context) |
-| 4 | SILENCE | Silence pattern overuse (max 4 per episode) |
-| 5 | TRANS | Translationese, AI tone, semantic literal translation detection |
-| 6 | SCENE | Scene structure (beats, conflict, resolution) |
-| 7 | LOGIC | Narrative logic, timeline, numerical consistency |
-| 8 | SUMMARY | Scene-level justification of existence |
-| 9 | UNIFORM | Cross-episode consistency |
-| 10 | HOOK | Hook intensity (opening, midpoint, cliffhanger) |
-| 11 | OPENING | Opening hook within 200 characters |
-| 12 | MOBILE | Mobile readability (paragraph length, dialogue ratio) |
-| A1 | ALIVE | Echo dialogue resolution |
-| A2 | ALIVE | Silence-to-nonverbal replacement |
-| A3 | ALIVE | Character vitality at tension points |
-| A4 | ALIVE | Emotional distance management |
+| 軸 | 名称 | 説明 |
+|----|------|------|
+| 1 | BANNED | 禁止表現（時間ジャンプ・クリシェ、メタコメント） |
+| 2 | VOICE | キャラクター対話の一貫性（ボイステーブルと照合） |
+| 3 | TITLE | 呼称ルール（話者・聞き手・文脈） |
+| 4 | SILENCE | 沈黙パターンの過剰使用（1 話につき最大 4 回） |
+| 5 | TRANS | 翻訳調・AI トーン・直訳の検出 |
+| 6 | SCENE | 場面構造（ビート・葛藤・解決） |
+| 7 | LOGIC | 物語論理・タイムライン・数値整合性 |
+| 8 | SUMMARY | 場面ごとの存在意義 |
+| 9 | UNIFORM | 各話間の一貫性 |
+| 10 | HOOK | フック強度（オープニング・中盤・クリフハンガー） |
+| 11 | OPENING | 冒頭 200 字以内のフック |
+| 12 | MOBILE | モバイル可読性（段落長・対話比率） |
+| A1 | ALIVE | エコー対話の解消 |
+| A2 | ALIVE | 沈黙→非言語への置換 |
+| A3 | ALIVE | 緊張点でのキャラ生命感 |
+| A4 | ALIVE | 距離感の管理 |
 
-## Agent Architecture
+## エージェント構成
 
-### Design Agents (5)
+### 設計エージェント (5)
 `concept-builder` · `character-architect` · `plot-hook-engineer` · `proposal-generator` · `domain-researcher`
 
-### Creation Agents (4)
+### 執筆エージェント (4)
 `episode-architect` · `episode-creator` · `continuity-bridge` · `quality-verifier`
 
-### Polish Agents (6)
+### 推敲エージェント (6)
 `rule-checker` · `story-analyst` · `platform-optimizer` · `alive-enhancer` · `revision-executor` · `revision-reviewer`
 
-### Rewrite Agents (4)
+### 再執筆エージェント (4)
 `revision-analyst` · `character-sculptor` · `episode-rewriter` · `quality-verifier`
 
-> `quality-verifier` is shared between Creation and Rewrite phases (18 unique agents total).
+> `quality-verifier` は執筆と再執筆の両フェーズで共有される（ユニーク数で 18 体）。
 
-## Acknowledgments
+## 謝辞
 
-Special thanks to [Minho Hwang (revfactory)](https://github.com/revfactory) — his [Harness](https://github.com/revfactory/harness) plugin made it easy to bootstrap the initial harness architecture. The insights he shares on LinkedIn and other channels have been a constant source of inspiration.
+[Minho Hwang (revfactory)](https://github.com/revfactory) 氏に感謝する。氏の [Harness](https://github.com/revfactory/harness) プラグインのおかげで、初期ハーネスのアーキテクチャ立ち上げが容易になった。LinkedIn その他で氏が共有してくれている知見は常に大きなインスピレーション源となっている。
 
-## License
+そして本プロジェクトの原典である [MJbae/awesome-novel-studio](https://github.com/MJbae/awesome-novel-studio) の作者 [MJbae](https://github.com/MJbae) 氏に感謝する。本リポジトリはその日本語ローカライズ版である。
+
+## ライセンス
 
 [Apache 2.0](LICENSE)

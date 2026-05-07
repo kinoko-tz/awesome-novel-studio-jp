@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Awesome Novel Studio — AI Web Novel Creation Harness</title>
-<meta property="og:title" content="Awesome Novel Studio — AI Web Novel Creation Harness">
-<meta property="og:description" content="18 agents, 10 skills, 16-axis polish. A harness-written novel signed a publishing deal.">
-<meta property="og:url" content="https://MJbae.github.io/novel-studio/">
+<title>Awesome Novel Studio — AI Web 小説創作ハーネス</title>
+<meta property="og:title" content="Awesome Novel Studio — AI Web 小説創作ハーネス">
+<meta property="og:description" content="18 体のエージェント・10 個のスキル・16 軸推敲。本ハーネスで書かれた Web 小説が出版契約を締結。">
+<meta property="og:url" content="https://kinoko-tz.github.io/awesome-novel-studio-jp/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -26,9 +26,8 @@
   --text-dim:#94a3b8;
   --border:rgba(255,255,255,0.06);
   --radius:16px;
-  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-family:'Inter','Noto Sans JP',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 }
-html.lang-ko{font-family:'Noto Sans KR',-apple-system,sans-serif}
 html{scroll-behavior:smooth;font-size:16px}
 body{font-family:inherit;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
 h1,h2,h3{font-weight:700;letter-spacing:-.02em;line-height:1.2}
@@ -39,12 +38,6 @@ a{color:var(--accent2);text-decoration:none;transition:color .2s}
 a:hover{color:#fcd34d}
 .container{max-width:1100px;margin:0 auto;padding:0 2rem;position:relative;z-index:1}
 section{padding:6rem 0}
-
-/* ── Language Toggle ── */
-.lang-toggle{position:fixed;top:1.2rem;right:1.5rem;z-index:100;display:flex;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:3px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.lang-btn{padding:.3rem .7rem;border:none;border-radius:7px;font-size:.75rem;font-weight:600;color:var(--text-dim);background:transparent;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.03em}
-.lang-btn:hover{color:var(--text)}
-.lang-btn.active{background:var(--accent);color:#fff;box-shadow:0 0 12px var(--accent-glow)}
 
 /* ── Section helpers ── */
 .section-tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);padding:.3rem 1rem;border-radius:100px;margin-bottom:1.2rem}
@@ -182,7 +175,7 @@ section{padding:6rem 0}
 .copy-btn{position:absolute;top:.8rem;right:.8rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.35rem .65rem;font-size:.7rem;color:var(--text-dim);cursor:pointer;transition:all .2s;font-family:inherit}
 .copy-btn:hover{color:var(--accent2);border-color:var(--accent)}
 .copy-btn.copied{color:var(--green);border-color:var(--green)}
-.code-label{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;font-family:'Inter',sans-serif}
+.code-label{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;font-family:'Inter','Noto Sans JP',sans-serif}
 
 /* ── Footer ── */
 footer{padding:3rem 0;border-top:1px solid var(--border);text-align:center}
@@ -198,15 +191,14 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
   .agent-grid{grid-template-columns:1fr}
   .axes-grid{grid-template-columns:repeat(3,1fr)}
   section{padding:4rem 0}
-  .lang-toggle{top:.8rem;right:.8rem}
   .proof-box{flex-direction:column;text-align:center;padding:1rem}
   .metrics-row{gap:1rem}
   .metric-card{min-width:140px;padding:1.2rem 1rem}
-  
+
   .pipeline-track::before{left:20px}
   .pipe-step{gap:1rem}
   .pipe-dot{width:40px;min-width:40px;height:40px;font-size:1.1rem}
-  
+
   .timeline-row{gap:1rem}
   .timeline-card{padding:1.2rem}
 }
@@ -215,50 +207,44 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
   section{padding:3rem 0}
   .axes-grid{grid-template-columns:repeat(2,1fr)}
   .problem-grid{grid-template-columns:1fr}
-  
+
   .metrics-row{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;width:100%}
   .metric-card{min-width:0;padding:1.2rem .8rem}
   .metric-card:last-child{grid-column:span 2}
   .metric-value{font-size:1.8rem}
   .metric-icon{font-size:1.3rem}
-  
+
   .hero h1{font-size:clamp(1.8rem,9vw,3rem)}
-  
+
   .code-block{padding:1rem 1.2rem;font-size:.75rem}
   .copy-btn{top:.6rem;right:.6rem;padding:.3rem .5rem;font-size:.65rem}
-  
+
   .agent-chips{gap:.3rem}
   .agent-chip{padding:.25rem .5rem;font-size:.7rem}
-  
+
   .timeline-node{width:36px;height:36px;font-size:.7rem;margin-top:.2rem}
   .timeline-label{font-size:.65rem}
   .timeline-text{font-size:.85rem}
-  
+
   .axis-item{padding:.8rem .5rem}
 }
 </style>
 </head>
 <body>
 
-<!-- ── Language Toggle ── -->
-<div class="lang-toggle">
-  <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
-  <button class="lang-btn" data-lang="ko" onclick="setLang('ko')">KO</button>
-</div>
-
 <!-- ══════════════ HERO ══════════════ -->
 <section class="hero">
   <div class="hero-inner">
     <div class="badge"><span class="badge-dot"></span>PRODUCTION-LEVEL HARNESS</div>
     <h1><span class="accent">Awesome</span> Novel Studio</h1>
-    <p class="hero-sub" data-i18n="hero.sub" data-i18n-html="true">A harness-driven creative pipeline<br><strong>for writing long-form web novels</strong></p>
+    <p class="hero-sub">長編 Web 小説を書き上げる<br><strong>ハーネス駆動の創作パイプライン</strong></p>
 
     <div class="proof-box reveal">
       <div class="proof-icon">&#x1F4DC;</div>
       <div>
-        <div class="proof-label" data-i18n="hero.proof_label">A web novel written by this harness</div>
-        <div class="proof-title" data-i18n="hero.proof_title">Signed a publishing deal</div>
-        <div class="proof-note" data-i18n="hero.proof_note">&#x203B; Title under NDA</div>
+        <div class="proof-label">本ハーネスで書かれた Web 小説が</div>
+        <div class="proof-title">出版社と正式連載契約を締結（韓国市場）</div>
+        <div class="proof-note">※ 作品名は契約上非公開</div>
       </div>
     </div>
 
@@ -266,17 +252,17 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
       <div class="metric-card">
         <div class="metric-icon">&#x1F441;&#xFE0F;</div>
         <div class="metric-value"><span data-target="8000" data-suffix="+">0</span></div>
-        <div class="metric-label" data-i18n="hero.views">Daily Views</div>
+        <div class="metric-label">1 日最大閲覧数</div>
       </div>
       <div class="metric-card">
         <div class="metric-icon">&#x2764;&#xFE0F;</div>
         <div class="metric-value"><span data-target="1900" data-suffix="+">0</span></div>
-        <div class="metric-label" data-i18n="hero.likes">Likes</div>
+        <div class="metric-label">いいね</div>
       </div>
       <div class="metric-card">
         <div class="metric-icon">&#x1F514;</div>
         <div class="metric-value"><span data-target="450" data-suffix="+">0</span></div>
-        <div class="metric-label" data-i18n="hero.subs">Subscribers</div>
+        <div class="metric-label">購読者</div>
       </div>
     </div>
   </div>
@@ -286,36 +272,36 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
 <section class="install" id="install">
   <div class="container">
     <div class="section-tag reveal">INSTALL</div>
-    <h2 class="reveal" data-i18n="install.title">Get Started</h2>
+    <h2 class="reveal">はじめに</h2>
 
     <div class="reveal">
       <div class="code-block" id="code-step1">
-        <div class="code-label" data-i18n="install.step1">Step 1 — Add the marketplace</div>
-        <button class="copy-btn" onclick="copyCode(this,'code-step1')" data-i18n="common.copy">Copy</button>
-        <span class="prompt">/</span> <span class="cmd">plugin marketplace add MJbae/awesome-novel-studio</span>
+        <div class="code-label">ステップ 1 — マーケットプレイスを追加</div>
+        <button class="copy-btn" onclick="copyCode(this,'code-step1')">コピー</button>
+        <span class="prompt">/</span> <span class="cmd">plugin marketplace add kinoko-tz/awesome-novel-studio-jp</span>
       </div>
     </div>
 
     <div class="reveal">
       <div class="code-block" id="code-step2">
-        <div class="code-label" data-i18n="install.step2">Step 2 — Install the plugin</div>
-        <button class="copy-btn" onclick="copyCode(this,'code-step2')" data-i18n="common.copy">Copy</button>
+        <div class="code-label">ステップ 2 — プラグインをインストール</div>
+        <button class="copy-btn" onclick="copyCode(this,'code-step2')">コピー</button>
         <span class="prompt">/</span> <span class="cmd">plugin install novel-studio@awesome-ai-studio</span>
       </div>
     </div>
 
     <div class="reveal">
       <div class="code-block" id="code-step3">
-        <div class="code-label" data-i18n="install.step3">Step 3 — Restart session to activate</div>
-        <button class="copy-btn" onclick="copyCode(this,'code-step3')" data-i18n="common.copy">Copy</button>
+        <div class="code-label">ステップ 3 — セッション再起動で有効化</div>
+        <button class="copy-btn" onclick="copyCode(this,'code-step3')">コピー</button>
         <span class="prompt">/</span> <span class="cmd">exit</span>
       </div>
     </div>
 
     <div class="reveal">
       <div class="code-block" id="code-start">
-        <div class="code-label" data-i18n="install.start">Step 4 — Start creating your novel</div>
-        <button class="copy-btn" onclick="copyCode(this,'code-start')" data-i18n="common.copy">Copy</button>
+        <div class="code-label">ステップ 4 — 小説の創作開始</div>
+        <button class="copy-btn" onclick="copyCode(this,'code-start')">コピー</button>
         <span class="prompt">/</span> <span class="cmd">propose</span>
       </div>
     </div>
@@ -326,38 +312,38 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
 <section class="section-alt" id="wall">
   <div class="container text-center">
     <div class="section-tag reveal">THE WALL</div>
-    <h2 class="reveal" data-i18n="wall.title" data-i18n-html="true">The Real Reason AI<br><span style="color:#ef4444">Can't Write Long-Form Fiction</span></h2>
-    <p class="section-desc reveal" data-i18n="wall.desc" data-i18n-html="true">Writing a single 5,000-character episode is easy.<br>The challenge is scaling to <strong>300 episodes and 1.5 million characters</strong>.<br>That's where AI breaks down.</p>
+    <h2 class="reveal">AI が長編を<br><span style="color:#ef4444">書ききれない本当の理由</span></h2>
+    <p class="section-desc reveal">1 話 5,000 字なら難しくない。<br>問題は <strong>300 話・150 万字</strong>に伸ばしたとき。<br>そこで AI は崩れる。</p>
 
     <div class="problem-grid">
       <div class="problem-card card-amber reveal">
         <div class="problem-icon icon-amber">&#x1F464;</div>
-        <h3 data-i18n="wall.p1_title">Characters Lose Their Depth</h3>
-        <p data-i18n="wall.p1_desc">A tough character in episode 50 turns indecisive by episode 200. Across dozens of characters, distinct voices, mannerisms, and motivations blur into sameness over time.</p>
+        <h3>キャラクターの立体性崩壊</h3>
+        <p>50 話で芯の強かったキャラクターが、200 話には優柔不断に変わる。数十人の登場人物の話法・癖・動機が回を重ねるごとに画一化していく。</p>
         <div class="solution-box">
           <div class="solution-tag tag-amber">SOLUTION</div>
-          <div class="solution-name" data-i18n="wall.p1_name">Character Sheet + Voice Table</div>
-          <div class="solution-desc" data-i18n="wall.p1_sol">Define each character's speech patterns, verbal tics, and non-verbal palette at the design stage, then auto-verify every episode against VOICE, TITLE, and ALIVE axes</div>
+          <div class="solution-name">キャラクターシート + ボイステーブル</div>
+          <div class="solution-desc">キャラクターごとの口調・語尾・非言語パレットを設計段階で定義し、VOICE・TITLE・ALIVE 軸で毎話自動検証する</div>
         </div>
       </div>
       <div class="problem-card card-blue reveal">
         <div class="problem-icon icon-blue">&#x1F517;</div>
-        <h3 data-i18n="wall.p2_title">Plot Coherence Breaks Down</h3>
-        <p data-i18n="wall.p2_desc">When a plot thread planted in episode 100 pays off in episode 250, any mid-story contradictions are immediately obvious to readers.</p>
+        <h3>ストーリー整合性の破綻</h3>
+        <p>100 話に仕込んだ伏線が 250 話で回収されるとき、その間に設定がブレていれば読者はすぐ気付く。</p>
         <div class="solution-box sol-blue">
           <div class="solution-tag tag-blue">SOLUTION</div>
-          <div class="solution-name" data-i18n="wall.p2_name">Plot Hook Guide + continuity-bridge</div>
-          <div class="solution-desc" data-i18n="wall.p2_sol">Decompose the entire narrative into 25-episode beat arcs, and auto-collect the timeline, foreshadowing, and character states from the previous 2 episodes before each draft</div>
+          <div class="solution-name">プロットフックガイド + continuity-bridge</div>
+          <div class="solution-desc">物語全体を 25 話単位のビートに分解し、各話執筆前に直前 2 話のタイムライン・伏線・キャラ状態を自動収集する</div>
         </div>
       </div>
       <div class="problem-card card-purple reveal">
         <div class="problem-icon icon-purple">&#x1F522;</div>
-        <h3 data-i18n="wall.p3_title">Facts &amp; Figures Contradict</h3>
-        <p data-i18n="wall.p3_desc">When specific numbers like prices, dates, and ages change from episode to episode, the entire world's credibility collapses in a single line.</p>
+        <h3>数値・設定の不整合</h3>
+        <p>価格・年代・年齢などの具体的な数値が話ごとに食い違うと、世界観の信頼は一行で崩れる。</p>
         <div class="solution-box sol-purple">
           <div class="solution-tag tag-purple">SOLUTION</div>
-          <div class="solution-name" data-i18n="wall.p3_name">guard_rails + LOGIC Axis</div>
-          <div class="solution-desc" data-i18n="wall.p3_sol">Define absolute rules in a config file and cross-verify numbers and timelines against the previous 2 episodes during the polish pass</div>
+          <div class="solution-name">guard_rails + LOGIC 軸</div>
+          <div class="solution-desc">絶対ルールを設定ファイルに定義し、推敲時に直前 2 話と数値・タイムラインを相互検証する</div>
         </div>
       </div>
     </div>
@@ -368,47 +354,47 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
 <section id="pipeline">
   <div class="container text-center">
     <div class="section-tag reveal">PIPELINE</div>
-    <h2 class="reveal" data-i18n="pipe.title" data-i18n-html="true">An Entire Novel in <span style="color:#f59e0b">5 Commands</span></h2>
+    <h2 class="reveal">コマンド <span style="color:#f59e0b">5 つ</span>で<br>長編 1 本</h2>
 
     <div class="pipeline-track">
       <div class="pipe-step reveal">
         <div class="pipe-dot dot-amber">&#x1F4A1;</div>
         <div>
           <div class="pipe-cmd cmd-amber">/propose</div>
-          <div class="pipe-label" data-i18n="pipe.s1_label">Ideate</div>
-          <div class="pipe-desc" data-i18n="pipe.s1_desc">Generate 3 proposals from genre, platform &amp; concept</div>
+          <div class="pipe-label">企画</div>
+          <div class="pipe-desc">ジャンル・プラットフォーム・コンセプトから企画案 3 つを生成</div>
         </div>
       </div>
       <div class="pipe-step reveal">
         <div class="pipe-dot dot-blue">&#x1F4D0;</div>
         <div>
           <div class="pipe-cmd cmd-blue">/design</div>
-          <div class="pipe-label" data-i18n="pipe.s2_label">Design</div>
-          <div class="pipe-desc" data-i18n="pipe.s2_desc">Bootstrap + Character Sheet + Plot Hook Guide</div>
+          <div class="pipe-label">設計</div>
+          <div class="pipe-desc">ブートストラップ + キャラクターシート + プロットフックガイド</div>
         </div>
       </div>
       <div class="pipe-step reveal">
         <div class="pipe-dot dot-green">&#x270D;&#xFE0F;</div>
         <div>
           <div class="pipe-cmd cmd-green">/create</div>
-          <div class="pipe-label" data-i18n="pipe.s3_label">Draft</div>
-          <div class="pipe-desc" data-i18n="pipe.s3_desc">Write episodes sequentially from design docs</div>
+          <div class="pipe-label">執筆</div>
+          <div class="pipe-desc">設計文書をもとに各話を順次執筆</div>
         </div>
       </div>
       <div class="pipe-step reveal">
         <div class="pipe-dot dot-purple">&#x1F48E;</div>
         <div>
           <div class="pipe-cmd cmd-purple">/polish</div>
-          <div class="pipe-label" data-i18n="pipe.s4_label">Polish</div>
-          <div class="pipe-desc" data-i18n="pipe.s4_desc">16-axis verification, 6 agents in parallel</div>
+          <div class="pipe-label">推敲</div>
+          <div class="pipe-desc">16 軸検証、6 エージェント並列</div>
         </div>
       </div>
       <div class="pipe-step reveal">
         <div class="pipe-dot dot-pink">&#x267B;&#xFE0F;</div>
         <div>
           <div class="pipe-cmd cmd-pink">/rewrite</div>
-          <div class="pipe-label" data-i18n="pipe.s5_label">Rewrite</div>
-          <div class="pipe-desc" data-i18n="pipe.s5_desc">Auto-calculate impact scope when designs change</div>
+          <div class="pipe-label">再執筆</div>
+          <div class="pipe-desc">設計変更時に影響範囲を自動算出</div>
         </div>
       </div>
     </div>
@@ -419,15 +405,15 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
 <section class="section-alt" id="agents">
   <div class="container text-center">
     <div class="section-tag reveal">AGENTS</div>
-    <h2 class="reveal" data-i18n="agents.title" data-i18n-html="true">Design big, break it down,<br>let <span style="color:#f59e0b">18 agents</span> refine it</h2>
-    <p class="section-desc reveal" data-i18n="agents.desc" data-i18n-html="true">First, lay out the full narrative arc.<br>Then decompose it into 25-episode blocks.<br>From drafting to polishing, specialized agents handle every step.</p>
+    <h2 class="reveal">大きく設計し、細かく分解し、<br><span style="color:#f59e0b">18 体のエージェント</span>が磨き上げる</h2>
+    <p class="section-desc reveal">まず物語アーク全体を組み、<br>25 話単位のブロックへ分解する。<br>執筆から推敲まで、専門エージェントが工程ごとに担当する。</p>
 
     <div class="agent-grid reveal">
       <!-- Design 5 -->
       <div class="agent-phase">
         <div class="agent-phase-header">
           <span class="agent-phase-dot" style="background:#3b82f6;box-shadow:0 0 10px rgba(59,130,246,0.5)"></span>
-          <span class="agent-phase-label" data-i18n="agents.design">Design</span>
+          <span class="agent-phase-label">設計</span>
           <span class="agent-phase-count" style="color:#3b82f6">5</span>
         </div>
         <div class="agent-chips">
@@ -442,7 +428,7 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
       <div class="agent-phase">
         <div class="agent-phase-header">
           <span class="agent-phase-dot" style="background:#10b981;box-shadow:0 0 10px rgba(16,185,129,0.5)"></span>
-          <span class="agent-phase-label" data-i18n="agents.creation">Creation</span>
+          <span class="agent-phase-label">執筆</span>
           <span class="agent-phase-count" style="color:#10b981">4</span>
         </div>
         <div class="agent-chips">
@@ -456,7 +442,7 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
       <div class="agent-phase">
         <div class="agent-phase-header">
           <span class="agent-phase-dot" style="background:#8b5cf6;box-shadow:0 0 10px rgba(139,92,246,0.5)"></span>
-          <span class="agent-phase-label" data-i18n="agents.polish">Polish</span>
+          <span class="agent-phase-label">推敲</span>
           <span class="agent-phase-count" style="color:#8b5cf6">6</span>
         </div>
         <div class="agent-chips">
@@ -472,7 +458,7 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
       <div class="agent-phase">
         <div class="agent-phase-header">
           <span class="agent-phase-dot" style="background:#ec4899;box-shadow:0 0 10px rgba(236,72,153,0.5)"></span>
-          <span class="agent-phase-label" data-i18n="agents.rewrite">Rewrite</span>
+          <span class="agent-phase-label">再執筆</span>
           <span class="agent-phase-count" style="color:#ec4899">4</span>
         </div>
         <div class="agent-chips">
@@ -490,26 +476,26 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
 <section id="axes">
   <div class="container text-center">
     <div class="section-tag reveal">QUALITY AXES</div>
-    <h2 class="reveal" data-i18n="axes.title" data-i18n-html="true"><span style="color:#f59e0b">16</span>-Axis Polish System</h2>
-    <p class="section-desc reveal" data-i18n="axes.desc" data-i18n-html="true">Every episode goes through 16 verification passes.<br>Banned expressions, character voice, foreshadowing continuity, mobile readability<br>— catching what even human editors miss.</p>
+    <h2 class="reveal"><span style="color:#f59e0b">16</span> 軸推敲システム</h2>
+    <p class="section-desc reveal">1 話につき 16 回の検証。<br>禁止表現、キャラクターの声、伏線の整合、モバイル可読性。<br>人間の編集者でも見落とすところまで拾う。</p>
 
     <div class="axes-grid reveal">
-      <div class="axis-item ax-red"><div class="axis-id">1</div><div class="axis-name">BANNED</div><div class="axis-desc" data-i18n="ax.1">Prohibited phrases</div></div>
-      <div class="axis-item ax-amber"><div class="axis-id">2</div><div class="axis-name">VOICE</div><div class="axis-desc" data-i18n="ax.2">Character voice</div></div>
-      <div class="axis-item ax-amber"><div class="axis-id">3</div><div class="axis-name">TITLE</div><div class="axis-desc" data-i18n="ax.3">Form of address</div></div>
-      <div class="axis-item ax-purple"><div class="axis-id">4</div><div class="axis-name">SILENCE</div><div class="axis-desc" data-i18n="ax.4">Silence patterns</div></div>
-      <div class="axis-item ax-red"><div class="axis-id">5</div><div class="axis-name">TRANS</div><div class="axis-desc" data-i18n="ax.5">AI tone detection</div></div>
-      <div class="axis-item ax-blue"><div class="axis-id">6</div><div class="axis-name">SCENE</div><div class="axis-desc" data-i18n="ax.6">Scene structure</div></div>
-      <div class="axis-item ax-blue"><div class="axis-id">7</div><div class="axis-name">LOGIC</div><div class="axis-desc" data-i18n="ax.7">Narrative logic</div></div>
-      <div class="axis-item ax-purple"><div class="axis-id">8</div><div class="axis-name">SUMMARY</div><div class="axis-desc" data-i18n="ax.8">Scene purpose</div></div>
-      <div class="axis-item ax-blue"><div class="axis-id">9</div><div class="axis-name">UNIFORM</div><div class="axis-desc" data-i18n="ax.9">Cross-ep consistency</div></div>
-      <div class="axis-item ax-green"><div class="axis-id">10</div><div class="axis-name">HOOK</div><div class="axis-desc" data-i18n="ax.10">Hook strength</div></div>
-      <div class="axis-item ax-green"><div class="axis-id">11</div><div class="axis-name">OPENING</div><div class="axis-desc" data-i18n="ax.11">Opening hook</div></div>
-      <div class="axis-item ax-cyan"><div class="axis-id">12</div><div class="axis-name">MOBILE</div><div class="axis-desc" data-i18n="ax.12">Mobile readability</div></div>
-      <div class="axis-item ax-pink"><div class="axis-id">A1</div><div class="axis-name">ALIVE&sup1;</div><div class="axis-desc" data-i18n="ax.a1">Echo</div></div>
-      <div class="axis-item ax-pink"><div class="axis-id">A2</div><div class="axis-name">ALIVE&sup2;</div><div class="axis-desc" data-i18n="ax.a2">Non-verbal</div></div>
-      <div class="axis-item ax-pink"><div class="axis-id">A3</div><div class="axis-name">ALIVE&sup3;</div><div class="axis-desc" data-i18n="ax.a3">Tension point</div></div>
-      <div class="axis-item ax-pink"><div class="axis-id">A4</div><div class="axis-name">ALIVE&#x2074;</div><div class="axis-desc" data-i18n="ax.a4">Emotional distance</div></div>
+      <div class="axis-item ax-red"><div class="axis-id">1</div><div class="axis-name">BANNED</div><div class="axis-desc">禁止表現</div></div>
+      <div class="axis-item ax-amber"><div class="axis-id">2</div><div class="axis-name">VOICE</div><div class="axis-desc">キャラクターの声</div></div>
+      <div class="axis-item ax-amber"><div class="axis-id">3</div><div class="axis-name">TITLE</div><div class="axis-desc">呼称ルール</div></div>
+      <div class="axis-item ax-purple"><div class="axis-id">4</div><div class="axis-name">SILENCE</div><div class="axis-desc">沈黙パターン</div></div>
+      <div class="axis-item ax-red"><div class="axis-id">5</div><div class="axis-name">TRANS</div><div class="axis-desc">翻訳調検出</div></div>
+      <div class="axis-item ax-blue"><div class="axis-id">6</div><div class="axis-name">SCENE</div><div class="axis-desc">場面構造</div></div>
+      <div class="axis-item ax-blue"><div class="axis-id">7</div><div class="axis-name">LOGIC</div><div class="axis-desc">物語論理</div></div>
+      <div class="axis-item ax-purple"><div class="axis-id">8</div><div class="axis-name">SUMMARY</div><div class="axis-desc">場面の存在意義</div></div>
+      <div class="axis-item ax-blue"><div class="axis-id">9</div><div class="axis-name">UNIFORM</div><div class="axis-desc">話間の一貫性</div></div>
+      <div class="axis-item ax-green"><div class="axis-id">10</div><div class="axis-name">HOOK</div><div class="axis-desc">フック強度</div></div>
+      <div class="axis-item ax-green"><div class="axis-id">11</div><div class="axis-name">OPENING</div><div class="axis-desc">冒頭フック</div></div>
+      <div class="axis-item ax-cyan"><div class="axis-id">12</div><div class="axis-name">MOBILE</div><div class="axis-desc">モバイル可読性</div></div>
+      <div class="axis-item ax-pink"><div class="axis-id">A1</div><div class="axis-name">ALIVE&sup1;</div><div class="axis-desc">エコー</div></div>
+      <div class="axis-item ax-pink"><div class="axis-id">A2</div><div class="axis-name">ALIVE&sup2;</div><div class="axis-desc">非言語</div></div>
+      <div class="axis-item ax-pink"><div class="axis-id">A3</div><div class="axis-name">ALIVE&sup3;</div><div class="axis-desc">緊張点</div></div>
+      <div class="axis-item ax-pink"><div class="axis-id">A4</div><div class="axis-name">ALIVE&#x2074;</div><div class="axis-desc">距離感</div></div>
     </div>
   </div>
 </section>
@@ -518,7 +504,7 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
 <section class="section-alt" id="story">
   <div class="container text-center">
     <div class="section-tag reveal">STORY</div>
-    <h2 class="reveal" data-i18n="story.title" data-i18n-html="true">How This Harness<br><span style="color:#f59e0b">Came to Be</span></h2>
+    <h2 class="reveal">このハーネスが<br><span style="color:#f59e0b">生まれるまで</span></h2>
 
     <div class="timeline">
       <div class="timeline-row reveal">
@@ -527,8 +513,8 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
           <div class="timeline-line"></div>
         </div>
         <div class="timeline-card">
-          <div class="timeline-label" style="color:#f59e0b" data-i18n="story.l1">BACKGROUND</div>
-          <p class="timeline-text" data-i18n="story.t1" data-i18n-html="true">I took <strong>8 weeks of lessons</strong> from a bestselling web novel author. Synopsis, plot structure, character design — I learned the professional workflow that carries a full-length serial novel.</p>
+          <div class="timeline-label" style="color:#f59e0b">背景</div>
+          <p class="timeline-text">著名な Web 小説作家から <strong>8 週間のレッスン</strong>を受けた。シノプシス、プロット構造、キャラクター設計 — プロが長編を書き切るための実践的なワークフローを学んだ。</p>
         </div>
       </div>
       <div class="timeline-row reveal">
@@ -537,8 +523,8 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
           <div class="timeline-line"></div>
         </div>
         <div class="timeline-card">
-          <div class="timeline-label" style="color:#3b82f6" data-i18n="story.l2">HARNESS ENGINEERING</div>
-          <p class="timeline-text" data-i18n="story.t2">Once I translated that knowledge into a harness, the real work began. Through serializing a full-length novel, I iterated — fixing, adding, and refining with every chapter.</p>
+          <div class="timeline-label" style="color:#3b82f6">ハーネスエンジニアリング</div>
+          <p class="timeline-text">学んだ知識をハーネスに翻訳した瞬間から本番が始まった。長編連載を進めながら、毎話ごとに直し、足し、削り直した。</p>
         </div>
       </div>
       <div class="timeline-row reveal">
@@ -546,9 +532,9 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
           <div class="timeline-node" style="background:#ec4899;box-shadow:0 0 14px rgba(236,72,153,0.4)">03</div>
         </div>
         <div class="timeline-card card-highlight">
-          <div class="timeline-label" style="color:#ec4899" data-i18n="story.l3">LIMITATIONS</div>
-          <p class="timeline-text" data-i18n="story.t3">The 16-axis polish system isn't perfect yet. Code can be validated with tests, but novel quality demands qualitative judgment. "Technically correct but lifeless prose" is still a human domain.</p>
-          <p class="timeline-closing" style="color:#ec4899" data-i18n="story.closing" data-i18n-html="true"><span style="white-space:nowrap">Awesome Novel Studio</span> doesn't replace the author. It's the tool that keeps you going — all the way to the final episode.</p>
+          <div class="timeline-label" style="color:#ec4899">限界</div>
+          <p class="timeline-text">16 軸推敲はまだ完璧ではない。コードはテストで検証できるが、小説の品質には定性的な判断がいる。「正しいけれど面白くない文章」は、依然として人間の領分だ。</p>
+          <p class="timeline-closing" style="color:#ec4899"><span style="white-space:nowrap">Awesome Novel Studio</span> は作家を置き換えない。長編の最終話まで一緒に走り切る道具だ。</p>
         </div>
       </div>
     </div>
@@ -558,163 +544,15 @@ footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
 <!-- ══════════════ FOOTER ══════════════ -->
 <footer>
   <div class="container">
-    <p style="font-size:.85rem;color:var(--text-dim);line-height:1.8;max-width:540px;margin:0 auto 1.5rem" data-i18n="footer.thanks" data-i18n-html="true">Special thanks to <a href="https://github.com/revfactory">Minho Hwang (revfactory)</a><br>— his <a href="https://github.com/revfactory/harness">Harness</a> plugin made it easy to bootstrap the initial harness architecture.</p>
+    <p style="font-size:.85rem;color:var(--text-dim);line-height:1.8;max-width:540px;margin:0 auto 1.5rem"><a href="https://github.com/revfactory">Minho Hwang (revfactory)</a> 氏に感謝する。<br>氏の <a href="https://github.com/revfactory/harness">Harness</a> プラグインのおかげで、初期ハーネスのアーキテクチャ立ち上げが容易になった。<br>本リポジトリは <a href="https://github.com/MJbae/awesome-novel-studio">MJbae/awesome-novel-studio</a> の日本語ローカライズ版である。</p>
     <div class="links">
-      <a href="https://github.com/MJbae/awesome-novel-studio" target="_blank"><svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" style="vertical-align:middle;margin-right:.4rem"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+      <a href="https://github.com/kinoko-tz/awesome-novel-studio-jp" target="_blank"><svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" style="vertical-align:middle;margin-right:.4rem"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
     </div>
     <p>Apache 2.0 License &copy; 2026 <span style="white-space:nowrap">Awesome Novel Studio</span></p>
   </div>
 </footer>
 
 <script>
-// ── i18n Data ──
-const i18n = {
-  "hero.sub": {
-    en: 'A harness-driven creative pipeline<br><strong>for writing long-form web novels</strong>',
-    ko: '장편 웹소설을 써내는<br><strong>하네스 기반 창작 파이프라인</strong>'
-  },
-  "hero.proof_label": { en: "A web novel written by this harness", ko: "하네스가 쓴 웹소설이" },
-  "hero.proof_title": { en: "Signed a publishing deal", ko: "출판사 정식 연재 계약 체결" },
-  "hero.proof_note": { en: "\u203B Title under NDA", ko: "\u203B 작품명은 계약상 비공개" },
-  "hero.views": { en: "Daily Views", ko: "1일 최대 조회수" },
-  "hero.likes": { en: "Likes", ko: "좋아요" },
-  "hero.subs": { en: "Subscribers", ko: "구독자" },
-
-  "wall.title": {
-    en: 'The Real Reason AI<br><span style="color:#ef4444">Can\'t Write Long-Form Fiction</span>',
-    ko: 'AI가 장편을<br><span style="color:#ef4444">못 쓰는 진짜 이유</span>'
-  },
-  "wall.desc": {
-    en: 'Writing a single 5,000-character episode is easy.<br>The challenge is scaling to <strong>300 episodes and 1.5 million characters</strong>.<br>That\'s where AI breaks down.',
-    ko: '1화 5,000자는 어렵지 않습니다.<br>문제는 <strong>300화, 150만 자</strong>입니다.<br>여기서 AI는 무너집니다.'
-  },
-  "wall.p1_title": { en: "Characters Lose Their Depth", ko: "인물의 입체성 붕괴" },
-  "wall.p1_desc": { en: "A tough character in episode 50 turns indecisive by episode 200. Across dozens of characters, distinct voices, mannerisms, and motivations blur into sameness over time.", ko: "50화에서 강인했던 캐릭터가 200화에서 갑자기 우유부단해집니다. 수십 명의 등장인물 성격\xB7말투\xB7동기가 회차를 거듭할수록 획일화됩니다." },
-  "wall.p1_name": { en: "Character Sheet + Voice Table", ko: "캐릭터시트 + 보이스 테이블" },
-  "wall.p1_sol": { en: "Define each character's speech patterns, verbal tics, and non-verbal palette at the design stage, then auto-verify every episode against VOICE, TITLE, and ALIVE axes", ko: "캐릭터별 말투\xB7어미\xB7비언어 팔레트를 설계 단계에서 정의하고, VOICE\xB7TITLE\xB7ALIVE 축으로 매 화 자동 검증" },
-  "wall.p2_title": { en: "Plot Coherence Breaks Down", ko: "스토리 개연성 파괴" },
-  "wall.p2_desc": { en: "When a plot thread planted in episode 100 pays off in episode 250, any mid-story contradictions are immediately obvious to readers.", ko: "100화에 깔아둔 복선이 250화에서 회수될 때, 중간에 설정이 바뀌어 있으면 독자는 바로 알아챕니다." },
-  "wall.p2_name": { en: "Plot Hook Guide + continuity-bridge", ko: "플롯훅가이드 + continuity-bridge" },
-  "wall.p2_sol": { en: "Decompose the entire narrative into 25-episode beat arcs, and auto-collect the timeline, foreshadowing, and character states from the previous 2 episodes before each draft", ko: "전체 서사를 25화 단위 비트로 분해하고, 매 화 집필 전 직전 2화의 타임라인\xB7복선\xB7인물 상태를 자동 수집" },
-  "wall.p3_title": { en: "Facts & Figures Contradict", ko: "숫자\xB7설정의 불일치" },
-  "wall.p3_desc": { en: "When specific numbers like prices, dates, and ages change from episode to episode, the entire world's credibility collapses in a single line.", ko: "가격, 연도, 나이 같은 구체적 수치가 화마다 달라지면, 세계관의 신뢰가 한 줄에 무너집니다." },
-  "wall.p3_name": { en: "guard_rails + LOGIC Axis", ko: "guard_rails + LOGIC 축" },
-  "wall.p3_sol": { en: "Define absolute rules in a config file and cross-verify numbers and timelines against the previous 2 episodes during the polish pass", ko: "절대 규칙을 설정 파일에 정의하고, 윤문 시 직전 2화와 수치\xB7타임라인을 교차 검증" },
-
-  "pipe.title": {
-    en: 'An Entire Novel in <span style="color:#f59e0b">5 Commands</span>',
-    ko: '명령어 5개로 <span style="color:#f59e0b">소설 한 편</span>'
-  },
-  "pipe.s1_label": { en: "Ideate", ko: "기획" },
-  "pipe.s1_desc": { en: "Generate 3 proposals from genre, Korean platform & concept", ko: "장르\xB7한국 플랫폼\xB7컨셉으로 기획안 3개 생성" },
-  "pipe.s2_label": { en: "Design", ko: "설계" },
-  "pipe.s2_desc": { en: "Bootstrap + Character Sheet + Plot Hook Guide", ko: "부트스트랩 + 캐릭터시트 + 플롯훅가이드" },
-  "pipe.s3_label": { en: "Draft", ko: "집필" },
-  "pipe.s3_desc": { en: "Write episodes sequentially from design docs", ko: "설계문서 기반 에피소드 순차 집필" },
-  "pipe.s4_label": { en: "Polish", ko: "윤문" },
-  "pipe.s4_desc": { en: "16-axis verification, 6 agents in parallel", ko: "16축 검증, 6에이전트 병렬" },
-  "pipe.s5_label": { en: "Rewrite", ko: "재작성" },
-  "pipe.s5_desc": { en: "Auto-calculate impact scope when designs change", ko: "설계 변경 시 영향 범위 자동 산출" },
-
-  "agents.title": {
-    en: 'Design big, break it down,<br>let <span style="color:#f59e0b">18 agents</span> refine it',
-    ko: '크게 설계하고, 잘게 쪼개고,<br><span style="color:#f59e0b">18개 에이전트</span>가 깎는다'
-  },
-  "agents.desc": { en: "First, lay out the full narrative arc.<br>Then decompose it into 25-episode blocks.<br>From drafting to polishing, specialized agents handle every step.", ko: "전체 서사를 먼저 잡고, 25화 단위로 분해한 뒤,<br>집필부터 윤문까지 전문 에이전트가 나눠 맡습니다." },
-  "agents.design": { en: "Design", ko: "설계" },
-  "agents.creation": { en: "Creation", ko: "집필" },
-  "agents.polish": { en: "Polish", ko: "윤문" },
-  "agents.rewrite": { en: "Rewrite", ko: "재작성" },
-
-  "axes.title": {
-    en: '<span style="color:#f59e0b">16</span>-Axis Polish System',
-    ko: '<span style="color:#f59e0b">16</span>축 윤문 시스템'
-  },
-  "axes.desc": { en: "Every episode goes through 16 verification passes.<br>Banned expressions, character voice, foreshadowing continuity, mobile readability<br>\u2014 catching what even human editors miss.", ko: "에피소드 하나에 16번의 검증.<br>금지 표현, 캐릭터 음성, 복선 정합성, 모바일 가독성<br>\u2014 사람 편집자도 놓치는 것까지 잡습니다." },
-  "ax.1": { en: "Prohibited phrases", ko: "금지 표현" },
-  "ax.2": { en: "Character voice", ko: "캐릭터 음성" },
-  "ax.3": { en: "Form of address", ko: "호칭 규칙" },
-  "ax.4": { en: "Silence patterns", ko: "침묵 패턴" },
-  "ax.5": { en: "AI tone detection", ko: "번역체 탐지" },
-  "ax.6": { en: "Scene structure", ko: "장면 구조" },
-  "ax.7": { en: "Narrative logic", ko: "서사 논리" },
-  "ax.8": { en: "Scene purpose", ko: "장면 존재 이유" },
-  "ax.9": { en: "Cross-ep consistency", ko: "화간 일관성" },
-  "ax.10": { en: "Hook strength", ko: "훅 강도" },
-  "ax.11": { en: "Opening hook", ko: "오프닝 훅" },
-  "ax.12": { en: "Mobile readability", ko: "모바일 가독성" },
-  "ax.a1": { en: "Echo", ko: "메아리" },
-  "ax.a2": { en: "Non-verbal", ko: "비언어" },
-  "ax.a3": { en: "Tension point", ko: "긴장점" },
-  "ax.a4": { en: "Emotional distance", ko: "거리감" },
-
-  "story.title": {
-    en: 'How This Harness<br><span style="color:#f59e0b">Came to Be</span>',
-    ko: '이 하네스가<br><span style="color:#f59e0b">만들어지기까지</span>'
-  },
-  "story.l1": { en: "BACKGROUND", ko: "배경" },
-  "story.t1": {
-    en: 'I took <strong>8 weeks of lessons</strong> from a bestselling web novel author. Synopsis, plot structure, character design \u2014 I learned the professional workflow that carries a full-length serial novel.',
-    ko: '유명 웹소설 작가에게 <strong>8주간 수업</strong>을 들었습니다.<br>시놉시스, 플롯, 캐릭터 설계 \u2014 프로 작가가 장편을 끌고 가는 현업 워크플로우를 배웠습니다.'
-  },
-  "story.l2": { en: "HARNESS ENGINEERING", ko: "하네스 엔지니어링" },
-  "story.t2": { en: "Through serializing a full-length novel, I iterated \u2014 fixing, adding, and refining with every chapter.", ko: "장편을 연재하면서 매 화마다 고치고, 추가하고, 다시 깎았습니다." },
-  "story.l3": { en: "LIMITATIONS", ko: "한계" },
-  "story.t3": { en: "The 16-axis polish system isn't perfect yet. Code can be validated with tests, but novel quality demands qualitative judgment. \"Technically correct but lifeless prose\" is still a human domain.", ko: "16축 윤문은 아직 완벽하지 않습니다. 코드는 테스트 코드로 검증하면 되지만, 소설의 품질은 정성적 평가가 필요하죠. '맞는데 재미없는 문장'은 아직 사람의 영역입니다." },
-  "story.closing": { en: "<span style=\"white-space:nowrap\">Awesome Novel Studio</span> doesn't replace the author. It's the tool that keeps you going \u2014 all the way to the final episode.", ko: "<span style=\"white-space:nowrap\">Awesome Novel Studio</span>는 작가를 대체하지 않습니다.<br>장편의 마지막 화까지 함께하는 도구입니다." },
-
-  "install.title": { en: "Get Started", ko: "시작하기" },
-  "install.step1": { en: "Step 1 — Add the marketplace", ko: "1단계 — 마켓플레이스 등록" },
-  "install.step2": { en: "Step 2 — Install the plugin", ko: "2단계 — 플러그인 설치" },
-  "install.step3": { en: "Step 3 — Restart session to activate", ko: "3단계 — 세션 재시작으로 활성화" },
-  "install.start": { en: "Step 4 — Start creating your novel", ko: "4단계 — 소설 창작 시작" },
-  "common.copy": { en: "Copy", ko: "복사" },
-  "footer.thanks": {
-    en: 'Special thanks to <a href="https://github.com/revfactory">Minho Hwang (revfactory)</a><br>— his <a href="https://github.com/revfactory/harness">Harness</a> plugin made it easy to bootstrap the initial harness architecture.',
-    ko: '<a href="https://github.com/revfactory">황민호(revfactory)</a>님께 감사드립니다.<br><a href="https://github.com/revfactory/harness">Harness</a> 플러그인 덕분에 초기 하네스 구축이 수월했습니다.'
-  }
-};
-
-// ── Language Detection & Switching ──
-function detectLang() {
-  const hash = location.hash.replace('#', '').toLowerCase();
-  if (['en', 'ko'].includes(hash)) return hash;
-  const stored = localStorage.getItem('novel-studio-lang');
-  if (stored) return stored;
-  const nav = (navigator.language || '').toLowerCase();
-  if (nav.startsWith('ko')) return 'ko';
-  return 'en';
-}
-let currentLang = detectLang();
-
-function setLang(lang) {
-  currentLang = lang;
-  localStorage.setItem('novel-studio-lang', lang);
-  history.replaceState(null, '', '#' + lang);
-  document.documentElement.lang = lang;
-  if (lang === 'ko') {
-    document.documentElement.classList.add('lang-ko');
-  } else {
-    document.documentElement.classList.remove('lang-ko');
-  }
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.dataset.i18n;
-    if (i18n[key] && i18n[key][lang]) {
-      if (el.dataset.i18nHtml === 'true') {
-        el.innerHTML = i18n[key][lang];
-      } else {
-        el.textContent = i18n[key][lang];
-      }
-    }
-  });
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === lang);
-  });
-}
-
-// Initialize
-setLang(currentLang);
-
 // ── Scroll Reveal ──
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
@@ -757,11 +595,10 @@ function copyCode(btn, blockId) {
   const text = Array.from(cmds).map(c => c.textContent).join('\n');
   navigator.clipboard.writeText(text).then(() => {
     btn.classList.add('copied');
-    btn.textContent = '\u2713';
+    btn.textContent = '✓';
     setTimeout(() => {
       btn.classList.remove('copied');
-      const key = 'common.copy';
-      btn.textContent = (i18n[key] && i18n[key][currentLang]) || 'Copy';
+      btn.textContent = 'コピー';
     }, 2000);
   });
 }
