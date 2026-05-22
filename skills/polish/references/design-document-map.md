@@ -1,25 +1,25 @@
-# 설정문서 매핑 가이드 — Polish 에이전트용
+# 設定文書マッピングガイド — Polish エージェント用
 
-윤문 에이전트가 참조하는 설정문서는 **프로젝트별 novel-config.md**에 정의한다.
-이 파일은 novel-config.md 작성 시 참고하는 가이드다.
+推敲エージェントが参照する設定文書は、**プロジェクト別の novel-config.md** に定義する。
+このファイルは novel-config.md を作成する際に参考にするガイドである。
 
 ---
 
-## 매핑 구조
+## マッピング構造
 
-각 소설 프로젝트의 `novel-config.md`에 아래 구조를 채운다:
+各小説プロジェクトの `novel-config.md` に、以下の構造を記入する。
 
-### 1. 공통 문서 (모든 EP에 적용)
+### 1. 共通文書（すべての EP に適用）
 
-| 문서 키 | 용도 | 에이전트 |
+| 文書キー | 用途 | エージェント |
 |---------|------|---------|
-| character_core | 캐릭터 핵심 정의, 고유 설정, 능력 매트릭스 | 전체 |
-| character_detail | 보이스표, 호칭표, 비언어 태그, 관계 변화 | rule-checker, alive-enhancer, revision-* |
-| bootstrap | 매크로 수치, 세계관 규칙, 시간선 | story-analyst, revision-* |
+| character_core | キャラクターの核となる定義、固有設定、能力マトリクス | 全体 |
+| character_detail | ボイス表、呼称表、非言語タグ、関係変化 | rule-checker, alive-enhancer, revision-* |
+| bootstrap | マクロ数値、世界観ルール、時間軸 | story-analyst, revision-* |
 
-### 2. EP 범위별 플롯 가이드
+### 2. EP 範囲別プロットガイド
 
-소설의 막(Act) 구조에 따라 EP 범위를 분할하고, 각 범위에 해당하는 플롯 가이드 경로를 지정.
+小説の幕（Act）構造に従って EP 範囲を分割し、各範囲に該当するプロットガイドのパスを指定する。
 
 ```
 EP001~EP026 → plot-hook-guide_act1.md
@@ -27,32 +27,32 @@ EP027~EP076 → plot-hook-guide_act2.md
 EP077~EP150 → plot-hook-guide_act3.md
 ```
 
-윤문 스킬은 대상 EP 번호를 보고 자동으로 해당 플롯 가이드를 선택한다.
+推敲スキルは対象 EP 番号を見て、自動的に該当するプロットガイドを選択する。
 
-### 3. 보조 참조 (선택)
+### 3. 補助参照（任意）
 
-| 문서 키 | 용도 | 에이전트 |
+| 文書キー | 用途 | エージェント |
 |---------|------|---------|
-| web_novel_guide | 모바일 최적화 원칙 | platform-optimizer |
-| verification | 검증 완료 수치 기록 | story-analyst |
-| plot_macro | 핵심 전환 포인트 매크로 | platform-optimizer |
+| web_novel_guide | モバイル最適化の原則 | platform-optimizer |
+| verification | 検証完了した数値の記録 | story-analyst |
+| plot_macro | 核心となる転換ポイントのマクロ | platform-optimizer |
 
 ---
 
-## 수치 교차검증 정본 우선순위
+## 数値クロスチェックの正本優先順位
 
-수치 불일치 발견 시 어느 문서를 정본으로 삼을지 novel-config.md에 명시한다.
-일반적 우선순위:
+数値の不一致を発見した際にどの文書を正本とするかを novel-config.md に明記する。
+一般的な優先順位は以下のとおりである。
 
-1. EP별 플롯 가이드 (가장 구체적)
-2. 부트스트랩 (매크로 수치)
-3. 검증 기록 (이미 확인된 수치)
-4. 직전 에피소드 (서사 연속성)
+1. EP 別プロットガイド（最も具体的）
+2. ブートストラップ（マクロ数値）
+3. 検証記録（すでに確認済みの数値）
+4. 直前のエピソード（叙事の連続性）
 
 ---
 
-## 새 프로젝트 설정 방법
+## 新規プロジェクトの設定方法
 
-1. 프로젝트 루트에 `novel-config.md` 생성
-2. `${CLAUDE_PLUGIN_ROOT}/skills/polish/references/project-config-template.md` 참조하여 섹션 채우기
-3. `/polish {프로젝트명}` 으로 실행
+1. プロジェクトルートに `novel-config.md` を作成する
+2. `${CLAUDE_PLUGIN_ROOT}/skills/polish/references/project-config-template.md` を参照してセクションを記入する
+3. `/polish {プロジェクト名}` で実行する

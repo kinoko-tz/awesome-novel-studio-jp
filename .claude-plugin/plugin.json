@@ -1,6 +1,6 @@
 {
   "name": "novel-studio",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "AI Web小説創作ハーネス。18個の専門エージェントと10個のスキルで企画→設計→執筆→推敲→再執筆の全工程を自動化。Web novel creation harness with end-to-end automation from planning to publishing.",
   "author": {
     "name": "MJbae",

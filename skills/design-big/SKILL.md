@@ -287,6 +287,14 @@ TaskCreate(tasks: [
 5. **target_platform 検証ゲート**:
    - Phase 1 で確定したプラットフォームが投稿プラットフォーム canonical name 6 個のいずれかに該当するか再検証する
    - 非対応値であれば `novel-config.md` を生成せずユーザー修正を依頼する
+6. **カクヨムプリセットの流し込み** (Phase 1 でカクヨムプリセットを適用した場合のみ):
+   - `${CLAUDE_PLUGIN_ROOT}/skills/design/references/platform-preset-kakuyomu.md` と project-config-template.md の「11. カクヨムプリセット」セクションを参照する
+   - 自動生成する novel-config.md に以下を流し込む:
+     - ターゲット読者の上書き（偏差値 60 以上の高校・大学生／編集者層が好む感性）
+     - KPI の上書き（書籍化スカウト／コンテスト評価。課金転換なし）
+     - custom_axes: FORESHADOW / DESPAIR / EMOTION_SWING / HAPPYEND / DUAL_LAYER
+     - 保存ガードレール: 各章末の「希望の灯」省略不可、ラスト 80% 最強化の成長曲線厳守
+   - あわせてプロットフックガイドに二段の絶望 (50%)・再起の階段 (50〜80%)・伏線の設置→回収対応表が反映されているか整合確認する
 
 生成パス: `{プロジェクトルート}/novel-config.md`
 
