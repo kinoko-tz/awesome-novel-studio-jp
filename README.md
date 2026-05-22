@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-1.2.0-brightgreen.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.2.1-brightgreen.svg" alt="Version">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple.svg" alt="Claude Code Plugin">
   <img src="https://img.shields.io/badge/Agents-18-orange.svg" alt="18 Agents">
@@ -74,7 +74,7 @@ Claude Code 上で動く Web 小説制作システム。18 体の専門エージ
 
 ## 長編 AI 小説の三つの壁
 
-5,000 字 1 話を AI で書くのは難しくない。問題は、それを 300 話・150 万字に伸ばしたときに起こる。
+2,500 字 1 話を AI で書くのは難しくない。問題は、それを 300 話・75 万字に伸ばしたときに起こる。
 
 | 壁 | 症状 | Awesome Novel Studio の解法 |
 |----|------|--------------------------------|

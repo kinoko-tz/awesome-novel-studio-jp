@@ -283,7 +283,7 @@ Agent("story-analyst"):
 Agent("platform-optimizer"):
   prompt: "EP{NNN} ({EPISODE_DIR}/ep{NNN}.md) に対してプラットフォーム最適化 4 軸+特化診断を実行。
            直前 2 話 ({EPISODE_DIR}/ep{NNN-2}.md, {EPISODE_DIR}/ep{NNN-1}.md) も読む。
-           直前 EP 末尾 500 字 → 現在 EP 冒頭 1,000 字の接続が自然か確認。
+           直前 EP 末尾 300 字 → 現在 EP 冒頭 500 字の接続が自然か確認。
 
            ★ 設定文書ロード (novel-config.md 基準):
            - {PLOT_DOC} — 当該 EP のフック類型・感情強度・ビート構造
